@@ -1,0 +1,34 @@
+<ng-container>
+  <ion-header [appStandardHeader]="scrollElement">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button text=""></ion-back-button>
+      </ion-buttons>
+      @if(chartTemplate$ | async; as chartTemplate){
+      <ion-buttons slot="end">
+        <ion-button [appTemplateChartInput]="chartTemplate">
+          <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      }
+      <ion-title>{{ (chartTemplate$ | async)?.title }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+  <ion-content #scrollElement fullscreen>
+    <ion-header collapse="condense" class="ion-no-border">
+      <ion-toolbar>
+        <ion-title size="large">
+          {{ (chartTemplate$ | async)?.title }}
+        </ion-title>
+      </ion-toolbar>
+    </ion-header>
+    @if(chartTemplateObservations$ | async; as chartTemplateObservations){
+    <app-observation-list
+      [observations]="chartTemplateObservations"
+    ></app-observation-list>
+    }
+  </ion-content>
+</ng-container>

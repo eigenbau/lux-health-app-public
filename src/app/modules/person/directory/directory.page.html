@@ -1,0 +1,169 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="start"></ion-buttons>
+    @if(resourceType$ | async){
+
+    <ion-title>
+      <!-- {{ resourceType === "RelatedPerson" ? "Supporters" : resourceType + 's' }} -->
+      Directory
+    </ion-title>
+    }
+    <ion-buttons slot="end">
+      <ion-button [appPersonInput] [initialPersonRoles]="initialPersonRoles">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-buttons slot="primary">
+      <ion-button
+        class="nav"
+        value="patient"
+        [routerLink]="['../', 'patient']"
+        routerDirection="root"
+        routerLinkActive="active"
+      >
+        Patients
+      </ion-button>
+      <ion-button
+        class="nav"
+        value="related-person"
+        [routerLink]="['../', 'related-person']"
+        routerDirection="root"
+        routerLinkActive="active"
+      >
+        Supporters
+      </ion-button>
+      <ion-button
+        class="nav"
+        value="practitioner"
+        [routerLink]="['../', 'practitioner']"
+        routerDirection="root"
+        routerLinkActive="active"
+      >
+        Practitioners
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar
+      showCancelButton="never"
+      [formControl]="searchInput"
+    ></ion-searchbar>
+    @if((resourceType$ | async) === 'Patient'){
+    <ion-buttons slot="primary">
+      @if(filtersActive$ | async; as filtersActive){
+      <ion-button
+        slot="end"
+        (click)="onToggleRecentOnly(filtersActive.onlyRecent)"
+      >
+        <ion-icon
+          slot="icon-only"
+          name="filter-circle-outline"
+          [color]="filtersActive.onlyRecent ? 'primary' : 'medium'"
+        ></ion-icon>
+      </ion-button>
+      }
+    </ion-buttons>
+    }
+  </ion-toolbar>
+  @if((loading$ | async) && (personList$ | async)?.length){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+<ion-content #scrollElement fullscreen>
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if(personList$ | async; as personList){ @if((loading$ | async) &&
+  personList?.length === 0){
+  <app-skeleton-list [rows]="15">
+    <ng-template #listItem>
+      <ion-list>
+        <ion-item>
+          <app-avatar slot="start" size="36px"></app-avatar>
+          <ion-label>
+            <h2>
+              <ion-skeleton-text
+                animated
+                style="width: 40%"
+              ></ion-skeleton-text>
+            </h2>
+            @if((resourceType$ | async) === 'Patient'){
+            <p>
+              <ion-skeleton-text
+                animated
+                style="width: 70%"
+              ></ion-skeleton-text>
+            </p>
+            }
+          </ion-label>
+          @if((resourceType$ | async) === 'Patient'){
+          <ion-icon name="medical-outline" slot="end" color="medium"></ion-icon>
+          }
+          <ion-icon
+            name="person-circle-outline"
+            slot="end"
+            color="medium"
+          ></ion-icon>
+        </ion-item>
+      </ion-list>
+    </ng-template>
+  </app-skeleton-list>
+  }
+  <ion-list>
+    @if(personList?.length === 0 && (loading$ | async) === false){
+    <ion-item lines="none" class="list-note">
+      <ion-label>No person found</ion-label>
+    </ion-item>
+    } @for(e of personList; track trackById){
+    <ion-item>
+      <app-avatar
+        slot="start"
+        size="36px"
+        [firstname]="e.resource.name?.[0]?.given?.[0] || ''"
+        [lastname]="e.resource.name?.[0]?.family || ''"
+      ></app-avatar>
+      <ion-label>
+        <h2>{{ e.resource | name }}</h2>
+        @if((resourceType$ | async) === 'Patient'){
+        <p>
+          <ion-icon
+            class="inline-icon"
+            [name]="e.resource | genderIcon"
+          ></ion-icon>
+          @if(e.resource.birthDate){
+          <span>• {{ e.resource | age }} yo</span>
+          }
+        </p>
+        }
+      </ion-label>
+      @if((resourceType$ | async) === 'Patient'){
+      <ion-icon
+        name="medical-outline"
+        slot="end"
+        color="primary"
+        [routerLink]="['../../',e.rootPersonResourceId,'patient', e.resource.id]"
+      ></ion-icon>
+      }
+      <ion-icon
+        name="person-circle-outline"
+        slot="end"
+        color="primary"
+        [routerLink]="e.rootPersonResourceId !== '' ? ['../../', e.rootPersonResourceId] : []"
+      ></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+
+  <ion-infinite-scroll class="ion-padding-top">
+    <ion-infinite-scroll-content
+      loadingSpinner="lines"
+    ></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  }
+</ion-content>

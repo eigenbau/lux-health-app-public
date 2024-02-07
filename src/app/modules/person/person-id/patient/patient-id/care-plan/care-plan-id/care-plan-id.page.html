@@ -1,0 +1,205 @@
+@if(carePlan$ | async; as carePlan){
+
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Care plan</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+      <ion-button appPatientCarePlanReport>
+        <ion-icon slot="icon-only" name="arrow-up-outline"></ion-icon>
+      </ion-button>
+
+      <ion-button
+        [appPatientCarePlanInput]="carePlan"
+        class="can-hide show-on-collapse"
+      >
+        <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar [appShowOnScroll]="content">
+    <ion-title size="small">
+      {{ carePlan?.status | titlecase }} •
+      <ion-icon name="rocket-outline" class="inline-icon"></ion-icon>
+      {{ carePlan?.period?.start || '' | distanceToNow }} •
+      <ion-icon name="flag-outline" class="inline-icon"></ion-icon>
+      {{ carePlan?.period?.end || '' | distanceToNow }}
+    </ion-title>
+  </ion-toolbar>
+
+  @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+<app-scroll-to-top [scrollElement]="content"></app-scroll-to-top>
+
+<ion-content #content fullscreen>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons collapse="true" slot="end">
+        <ion-button [appPatientCarePlanInput]="carePlan">
+          <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>Care plan</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list inset lines="inset">
+    <ion-item>
+      <ion-label>{{ carePlan?.status | titlecase }}</ion-label>
+      <ion-icon name="toggle" slot="start"></ion-icon>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        {{ carePlan.period?.start || '' | distanceToNow }} • {{
+        carePlan.period?.start | date: 'd MMM y' }}
+      </ion-label>
+      <ion-icon name="rocket-outline" slot="start"></ion-icon>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        {{ carePlan.period?.end || '' | distanceToNow }} • {{
+        carePlan.period?.end || '' | date: 'd MMM y' }}
+      </ion-label>
+      <ion-icon name="flag-outline" slot="start"></ion-icon>
+    </ion-item>
+    @for(note of carePlan?.note; track $index){
+    <ion-item [appExpandable] class="margin-fix">
+      <ion-label>{{ note.text }}</ion-label>
+      <ion-icon name="document-text-outline" slot="start"></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+
+  <!-- Activity -->
+  <ion-list-header class="inset" lines="none">
+    <ion-label>
+      <ion-icon name="accessibility-outline" class="inline-icon"></ion-icon>
+      Activities
+    </ion-label>
+  </ion-list-header>
+
+  @for(activity of carePlan.activity; track $index){
+  <ion-list
+    inset
+    lines="inset"
+    [ngStyle]="{'margin-top': $index > 0 ? '40px' : '' }"
+  >
+    <ion-item-divider color="light">
+      {{ activity.detail?.code?.coding?.[0]?.display | titlecase }}
+    </ion-item-divider>
+    @if(activity?.detail?.description){
+    <ion-item [appExpandable]>
+      <ion-icon name="information-outline" slot="start"></ion-icon>
+      <ion-label>{{ activity?.detail?.description }}</ion-label>
+    </ion-item>
+    }
+    <ion-item>
+      <ion-icon
+        slot="start"
+        [name]="
+            activity.detail?.status === 'completed' ? 'checkmark-outline'
+            : activity.detail?.status === 'cancelled' ? 'ban-outline'
+            : 'hourglass-outline'"
+      ></ion-icon>
+      <ion-label>{{ activity.detail?.status | titlecase }}</ion-label>
+    </ion-item>
+    @if(activity.detail && activity.detail.goal && activity.detail.goal.length >
+    0){ @for(goal of (activity.detail.goal | referencedResource: 'IGoal' |
+    async); track $index){
+    <ion-item [appExpandable] lines="none">
+      <ion-icon
+        [name]="$index === 0 ? 'ribbon-outline' : ''"
+        slot="start"
+      ></ion-icon>
+      <ion-label>
+        {{ goal.description.coding?.[0]?.display }} @if(goal.target &&
+        goal.target.length > 0 && goal.target[0].detailString){
+
+        <span>
+          <ion-icon
+            name="chevron-forward-outline"
+            class="inline-icon"
+          ></ion-icon>
+          {{ goal.target[0].detailString }}
+        </span>
+        }
+      </ion-label>
+    </ion-item>
+    } }
+  </ion-list>
+
+  }
+
+  <!-- Related Goals -->
+  @if((goalReferencesFromAllActivities$ | async); as goalReferences){
+  @if(goalReferences | referencedResource: 'IGoal' | async; as goals){
+  @if(goals.length > 0){
+  <ion-list-header class="inset" lines="none">
+    <ion-label>
+      <ion-icon name="ribbon-outline" class="inline-icon"></ion-icon>
+      Related Goals
+    </ion-label>
+  </ion-list-header>
+  } @if(goals.length > 0){
+  <ion-list inset lines="inset">
+    @for(g of goals; track trackById){
+
+    <app-goal-item
+      [goal]="g"
+      [link]="['../../', 'goal', g.id || '']"
+      [lines]="$index + 1 === goals.length ? 'none' : 'inset'"
+    ></app-goal-item>
+    }
+  </ion-list>
+  } } }
+
+  <!-- Delete -->
+  <div class="center">
+    <ion-icon
+      (click)="deleteResource(carePlan.id || '')"
+      color="light"
+      name="trash-outline"
+    ></ion-icon>
+  </div>
+
+  <!-- History - Start -->
+  <!-- <ion-list-header class="inset"><ion-label>
+         <ion-icon name="arrow-undo-outline" class="inline-icon"></ion-icon>
+        History</ion-label></ion-list-header>
+    <ion-list
+      inset="true"
+      *ngIf="history$ | async as history"
+      lines="none"
+      class="history-list"
+    >
+      <ng-container *ngFor="let entry of history; let i = index">
+        <ion-item [appExpandable]>
+          <ion-label color="medium">
+            <p>
+              <strong>
+                {{ entry.meta.lastUpdated | distanceToNow }} • {{
+                entry.meta.lastUpdated | date: 'd MMM y' }}
+              </strong>
+            </p>
+            <p
+              *ngIf="entry?.note && history?.[i+1]??.note && entry?.note[0]?.text !== history?.[i+1]??.note[0]?.text"
+            >
+              Note: {{ entry?.note[0]?.text }}
+            </p>
+          </ion-label>
+          <ion-icon name="ellipse" slot="start" color="light"></ion-icon>
+        </ion-item>
+      </ng-container>
+    </ion-list> -->
+</ion-content>
+}

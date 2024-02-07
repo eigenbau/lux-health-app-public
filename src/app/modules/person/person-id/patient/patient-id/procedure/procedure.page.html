@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Procedures</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+      <ion-button [appPatientProcedureInput] class="can-hide show-on-collapse">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <!-- <ion-toolbar>
+    <ion-searchbar [formControl]="searchInput"></ion-searchbar>
+  </ion-toolbar> -->
+
+  @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+<ion-content #scrollElement fullscreen>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons collapse="true" slot="end">
+        <ion-button [appPatientProcedureInput]>
+          <ion-icon slot="icon-only" name="add"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title size="large">Procedures</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- No procedures found -->
+  @if((procedureList$ | async)?.length === 0 && (loading$ | async) === false){
+  <ion-list>
+    <ion-item lines="none" class="list-note">
+      <ion-label>No procedures found</ion-label>
+    </ion-item>
+  </ion-list>
+  }
+
+  <!-- Procedures -->
+  @if(procedureList$ | async; as procedureList){
+  <ion-list>
+    @for(p of procedureList; track trackById; let i = $index){
+    <app-procedure-item
+      [procedure]="p"
+      [link]="[ p.id || '']"
+      [lines]="i + 1 === procedureList.length ? 'full' : 'inset'"
+    ></app-procedure-item>
+    }
+  </ion-list>
+  }
+</ion-content>

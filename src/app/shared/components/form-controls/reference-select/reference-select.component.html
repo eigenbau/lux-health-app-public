@@ -1,0 +1,20 @@
+@if (selectOptions$ | async; as selectOptions) {
+  <ion-select
+    [label]="label"
+    [attr.aria-label]="ariaLabel"
+    [labelPlacement]="labelPlacement"
+    [class]="ionSelectClass"
+    [placeholder]="placeholder"
+    [formControl]="referenceFormControl"
+    [compareWith]="fh.ionSelectCompareWithReferenceMultiple"
+    [multiple]="multiple"
+    [slot]="ionSlot"
+    [justify]="justify"
+  >
+    @for (option of selectOptions; track option.reference) {
+      <ion-select-option [value]="option">
+        {{ option.display }}
+      </ion-select-option>
+    }
+  </ion-select>
+}

@@ -1,0 +1,108 @@
+<ion-list-header>
+  <ion-label>Activity</ion-label>
+  <ion-button class="plus" (click)="activityFormArrayHelper.push()">
+    <ion-icon name="add" color="primary" slot="icon-only"></ion-icon>
+  </ion-button>
+</ion-list-header>
+
+@if (activityFormArray.length > 0) {
+  <ion-list [formGroup]="activityFormArray | formGroup">
+    @for (
+      activityItem of activityFormArray.controls;
+      track activityItem;
+      let i = $index
+    ) {
+      <ng-container [formGroupName]="i">
+        <ion-item-sliding #activitySlidingItem>
+          <ion-item [class.active]="activeIndex === i">
+            <ion-label (click)="toggleInput(i)">
+              {{
+                (activityFormArray | formControl: [i, "detail", "code"]).value
+                  .coding
+                  ? (activityFormArray | formControl: [i, "detail", "code"])
+                      .value.coding[0].display
+                  : "Add activity details..."
+              }}
+            </ion-label>
+          </ion-item>
+          <ion-item-options
+            side="end"
+            (ionSwipe)="activityFormArrayHelper.removeAt(i)"
+          >
+            <ion-item-option
+              color="primary"
+              (click)="activityFormArrayHelper.removeAt(i)"
+              expandable="true"
+            >
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+
+        <!-- Form fields - Start -->
+        <div class="can-hide" [class.hidden]="activeIndex !== i">
+          <!-- Goals -->
+          <ion-item>
+            <app-reference-select
+              ariaLabel="Goals"
+              placeholder="Goals"
+              justify="start"
+              resourceType="Goal"
+              [multiple]="true"
+              [referenceFormControl]="
+                activityFormArray | formControl: [i, 'detail', 'goal']
+              "
+            ></app-reference-select>
+          </ion-item>
+          <!-- Activity type -->
+          <ion-item>
+            <app-value-set-select
+              label="Activity type"
+              justify="space-between"
+              preferredInputInterface="action-sheet"
+              title="Activity"
+              [codeableConceptFormControl]="
+                activityFormArray | formControl: [i, 'detail', 'code']
+              "
+              [config]="{
+                ecl: '< 71388002 | Procedure|',
+                valueSetCustomName: 'procedure'
+              }"
+            ></app-value-set-select>
+          </ion-item>
+          <!-- Status -->
+          <ion-item>
+            <app-value-set-select
+              label="Status"
+              justify="space-between"
+              [codeFormControl]="
+                activityFormArray | formControl: [i, 'detail', 'status']
+              "
+              preferredInputInterface="action-sheet"
+              [config]="{
+                valueSet: 'care-plan-activity-status',
+                source: 'local'
+              }"
+            ></app-value-set-select>
+          </ion-item>
+          <!-- Description -->
+          <ion-item>
+            <ion-textarea
+              placeholder="Description"
+              aria-label="Description"
+              autoGrow="true"
+              autocapitalize="on"
+              rows="1"
+              [formControl]="
+                activityFormArray | formControl: [i, 'detail', 'description']
+              "
+            ></ion-textarea>
+          </ion-item>
+          <ion-item-divider></ion-item-divider>
+
+          <!-- Form fields - End -->
+        </div>
+      </ng-container>
+    }
+  </ion-list>
+}

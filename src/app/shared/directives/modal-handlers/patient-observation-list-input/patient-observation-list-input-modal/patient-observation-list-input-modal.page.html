@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button
+        appTemplateSelection
+        (templateBundleSelected)="observationListFormGroup.onTemplateBundleSelected($event)"
+      >
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="onSubmit()" [disabled]="form.invalid">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Observation</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container [formGroup]="form">
+    <app-patient-observation-list-form-group
+      #observationListFormGroup
+      [patchValue]="observations"
+      [dateTime]="dateTime"
+      [subject]="subject"
+      [encounter]="encounter"
+      lines="inset"
+    ></app-patient-observation-list-form-group>
+  </ng-container>
+</ion-content>

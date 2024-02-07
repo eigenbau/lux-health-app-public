@@ -1,0 +1,76 @@
+ion-toolbar {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 20px;
+  --background: none;
+}
+
+ion-segment {
+  width: 100%;
+  ion-segment-button {
+    min-width: 20px;
+  }
+}
+
+.grid-container {
+  display: grid;
+  grid-template:
+    [row2-start] "scroll" auto [row2-end]
+    / auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.scrolling-wrapper {
+  --mask: linear-gradient(to right, transparent 8px, black 16px) left,
+    linear-gradient(to left, transparent 8px, black 16px) right;
+  --mask-size: 51% 100%;
+  --mask-repeat: no-repeat;
+  grid-area: scroll;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 16px;
+  scrollbar: none;
+  mask: var(--mask);
+  mask-size: var(--mask-size);
+  mask-repeat: var(--mask-repeat);
+  -webkit-mask: var(--mask);
+  -webkit-mask-size: var(--mask-size);
+  -webkit-mask-repeat: var(--mask-repeat);
+}
+
+.scrolling-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+ul {
+  display: flex;
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.card {
+  min-width: 40%;
+  scroll-snap-align: start;
+  display: inline-block;
+  padding-right: 8px;
+  padding-left: 16px;
+}
+
+.card:last-of-type {
+  padding-right: 16px;
+}
+
+p {
+  font-size: 14px;
+  margin-top: 0;
+  margin-bottom: 0;
+  color: var(--ion-color-medium);
+}
+
+h1 {
+  margin-top: 4px;
+  margin-bottom: 0;
+}

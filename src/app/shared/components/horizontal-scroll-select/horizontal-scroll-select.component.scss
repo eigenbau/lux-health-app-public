@@ -1,0 +1,67 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: [fixed] fit-content(10px) [scroll] 1fr;
+  margin-bottom: 15px;
+}
+
+.fixed {
+  grid-area: fixed;
+  padding-left: 12px;
+  //border-right: 1px solid rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.12);
+}
+
+.scrolling-wrapper {
+  --mask: radial-gradient(circle at -12px, transparent 16px, black 20px) left,
+    linear-gradient(to left, transparent 8px, black 16px) right;
+  --mask-size: 51% 100%;
+  --mask-repeat: no-repeat;
+  grid-area: scroll;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 8px;
+  scrollbar: none;
+  mask: var(--mask);
+  mask-size: var(--mask-size);
+  mask-repeat: var(--mask-repeat);
+  -webkit-mask: var(--mask);
+  -webkit-mask-size: var(--mask-size);
+  -webkit-mask-repeat: var(--mask-repeat);
+}
+
+.scrolling-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+ul {
+  display: flex;
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.card {
+  scroll-snap-align: start;
+  display: inline-block;
+  padding-right: 8px;
+}
+
+.fixed .card {
+  padding-right: 0px;
+}
+
+.scrolling-wrapper .card:first-of-type {
+  padding-left: 8px;
+}
+
+.scrolling-wrapper .card:last-of-type {
+  padding-right: 12px;
+}
+
+ion-chip {
+  width: max-content;
+  margin: 0;
+}
+
+ion-chip:not(.active) {
+  //--background: transparent;
+}

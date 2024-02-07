@@ -1,0 +1,150 @@
+@if(documentReference$ | async; as documentReference){
+<!-- Your code here -->
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Document</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+
+      <ion-button
+        [appPatientDocumentReferenceInput]="documentReference"
+        class="can-hide show-on-collapse"
+      >
+        <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+<app-scroll-to-top [scrollElement]="content"></app-scroll-to-top>
+
+<ion-content #content fullscreen>
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons collapse="true" slot="end">
+        <ion-button [appPatientDocumentReferenceInput]="documentReference">
+          <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>Document</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-list inset lines="inset">
+    <ion-item>
+      <ion-label>
+        {{ documentReference.type?.coding?.[0]?.display | titlecase }}
+      </ion-label>
+      <ion-icon [name]="fileTypeIcon$ | async" slot="start"></ion-icon>
+    </ion-item>
+  </ion-list>
+
+  <ion-list inset lines="inset">
+    <ion-item>
+      <ion-label>
+        {{ documentReference.date | distanceToNow }} • {{ documentReference.date
+        | date: 'd MMM y' }}
+      </ion-label>
+      <ion-icon name="calendar-outline" slot="start"></ion-icon>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>
+        {{ documentReference.category?.[0]?.coding?.[0]?.display | titlecase }}
+      </ion-label>
+      <ion-icon name="list-outline" slot="start"></ion-icon>
+    </ion-item>
+
+    <!-- Status -->
+    <ion-item>
+      <ion-label>{{ documentReference.status | titlecase }}</ion-label>
+      <ion-icon
+        [name]="documentReference.status === 'entered-in-error' ? 'alert-circle-outline' : 'checkmark-circle-outline'"
+        slot="start"
+      ></ion-icon>
+    </ion-item>
+
+    <!-- Description -->
+    @if(documentReference.description){
+    <ion-item [appExpandable]>
+      <ion-label>{{ documentReference.description }}</ion-label>
+      <ion-icon name="document-text-outline" slot="start"></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+
+  <!-- Download -->
+  <ion-list inset>
+    <ion-button
+      [download]="documentReference.type?.coding?.[0]?.display"
+      expand="block"
+      color="primary"
+      [href]="documentReference.content[0].attachment.url | fileUrl | async"
+    >
+      <ion-icon slot="icon-only" name="cloud-download-outline"></ion-icon>
+    </ion-button>
+  </ion-list>
+
+  <!-- Related Encounter -->
+
+  @if(documentReference?.context?.related | referencedResource: 'IEncounter' |
+  async; as encounters){ @if(encounters.length > 0){
+  <ion-list-header class="inset" lines="none">
+    <ion-label>
+      <ion-icon name="calendar-outline" class="inline-icon"></ion-icon>
+      Related Encounter
+    </ion-label>
+  </ion-list-header>
+  }
+
+  <ion-list inset lines="inset">
+    @for(e of encounters; track $index){
+    <app-encounter-item
+      [encounter]="e"
+      [link]="[ '../../', 'encounter', e.id || '']"
+    ></app-encounter-item>
+    }
+  </ion-list>
+  }
+
+  <!-- Related Observation -->
+  @if(documentReference?.context?.related | referencedResource: 'IObservation' |
+  async; as observations){ @if(observations.length > 0){
+  <ion-list-header class="inset" lines="none">
+    <ion-label>
+      <ion-icon name="pulse-outline" class="inline-icon"></ion-icon>
+      Related Observation
+    </ion-label>
+  </ion-list-header>
+  }
+
+  <ion-list inset lines="inset">
+    @for(o of observations; track $index){
+    <app-observation-item
+      [link]="[ '../../', 'observation', o.id || '']"
+      [observation]="o"
+    ></app-observation-item>
+    }
+  </ion-list>
+  }
+
+  <!-- Delete -->
+  <div class="center">
+    <ion-icon
+      (click)="deleteResource(documentReference.id)"
+      color="light"
+      name="trash-outline"
+    ></ion-icon>
+  </div>
+</ion-content>
+}

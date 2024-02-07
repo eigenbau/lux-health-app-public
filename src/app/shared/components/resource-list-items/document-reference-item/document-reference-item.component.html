@@ -1,0 +1,21 @@
+<ion-item detail [lines]="lines" [appExpandable]="trigger" class="resource">
+  <ion-label>
+    <div class="note" [routerLink]="link">Details</div>
+    <h2 #trigger>
+      {{ documentReference.type?.coding?.[0]?.display | titlecase }}
+      <ion-icon class="inline-icon" [name]="fileTypeIcon"></ion-icon>
+    </h2>
+    <p>
+      {{ documentReference.category?.[0]?.coding?.[0]?.display }}
+      @if (documentReference.description) {
+        <span>• {{ documentReference.description }}</span>
+      }
+    </p>
+    <a [href]="documentReference.content[0].attachment.url | fileUrl | async">
+      <ion-chip color="primary" class="inline">
+        <ion-icon name="cloud-download-outline"></ion-icon>
+        <ion-label>Download file</ion-label>
+      </ion-chip>
+    </a>
+  </ion-label>
+</ion-item>

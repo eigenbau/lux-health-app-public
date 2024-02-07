@@ -1,0 +1,75 @@
+<ng-container [formGroup]="encounterFormGroup">
+  <ion-list lines="inset">
+    <!-- Class -->
+    <ion-item>
+      <app-value-set-select
+        label="Type:"
+        justify="space-between"
+        interface="action-sheet"
+        [codingFormControl]="encounterFormGroup | formControl: 'class'"
+        [config]="{ source: 'local', valueSet: 'encounter-code' }"
+      ></app-value-set-select>
+    </ion-item>
+    <!-- Participant -->
+    <!-- <ion-item>
+      <ion-select
+        label="Participants"
+        multiple
+        formControlName="participant"
+        [compareWith]="fh.ionSelectCompareWithParticipant"
+      >
+        <ion-select-option *ngFor="let obj of participants" [value]="obj">
+          {{ obj.individual.display | titlecase }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item> -->
+    <!-- Period -->
+    <ion-item (click)="date.openDatetime()" class="lux-input">
+      <app-datetime-input
+        #date
+        label="Date:"
+        presentation="date"
+        representation="complete"
+        displayFormat="MMM d, y"
+        [datetimeFormControl]="
+          encounterFormGroup | formControl: ['period', 'start']
+        "
+      ></app-datetime-input>
+    </ion-item>
+    <ion-item (click)="time.openDatetime()" class="lux-input">
+      <app-datetime-input
+        #time
+        label="Start time:"
+        presentation="time"
+        representation="complete"
+        displayFormat="h:mm a"
+        [datetimeFormControl]="
+          encounterFormGroup | formControl: ['period', 'start']
+        "
+        [minuteValues]="minValues"
+      ></app-datetime-input>
+    </ion-item>
+    <ion-item>
+      <ion-select
+        label="Duration:"
+        justify="space-between"
+        interface="action-sheet"
+        [formControl]="encounterDurationFormControl"
+      >
+        @for (num of durationValues; track $index) {
+          <ion-select-option [value]="num">{{ num }} Minutes</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+    <!-- Status -->
+    <ion-item>
+      <app-value-set-select
+        label="Status:"
+        justify="space-between"
+        [codeFormControl]="encounterFormGroup | formControl: ['status']"
+        title="Status"
+        [config]="{ source: 'local', valueSet: 'encounter-status' }"
+      ></app-value-set-select>
+    </ion-item>
+  </ion-list>
+</ng-container>

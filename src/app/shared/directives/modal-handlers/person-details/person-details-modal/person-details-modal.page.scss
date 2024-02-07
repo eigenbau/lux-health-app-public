@@ -1,0 +1,14 @@
+ion-item {
+  --background: none;
+  --padding-top: 16px;
+  --inner-border-width: 0;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  border: none;
+  text-align: center;
+  ion-label {
+    margin: 0;
+  }
+}

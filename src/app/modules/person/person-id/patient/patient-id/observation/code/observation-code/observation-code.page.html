@@ -1,0 +1,102 @@
+@if(observationBundle$ | async; as observationBundle){
+<ion-header>
+  @if(patient$ | async; as patient){
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title style="max-width: 85vw">
+      {{ observationBundle.code?.coding?.[0]?.display }}
+    </ion-title>
+    @if(observationTemplate$ | async; as observationTemplate){
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+
+      <ion-button
+        [appPatientObservationInput]="observationBundle.observations?.[0]"
+        [editMode]="false"
+      >
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    }
+  </ion-toolbar>
+  }
+</ion-header>
+<app-scroll-to-top [scrollElement]="content"></app-scroll-to-top>
+
+<ion-content #content fullscreen>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title>{{ observationBundle.code?.coding?.[0]?.display }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  @if(observationBundle.total > 0){
+  @if(observationBundle.values?.[0]?.isHomongeneous &&
+  observationBundle.values?.[0]?.type === 'number') {
+  <app-line-chart
+    [series]="observationBundle"
+    [selectedObservationId]="(selectedObservationId$ | async) || ''"
+    (selectedObservationIdChanged)="selectObservation($event)"
+    [viewDidEnter]="(viewDidEnter$ | async) || 0"
+  ></app-line-chart>
+  }
+  <ion-list
+    lines="full"
+    inset="true"
+    [ngClass]="{'chart-list': observationBundle.values?.[0]?.isHomongeneous && observationBundle.values?.[0]?.type === 'number'}"
+  >
+    @for(observation of observationBundle.observations; track i; let i =
+    $index){
+    <ion-item
+      [appExpandable]="trigger"
+      class="resource"
+      [ngClass]="{'expanded' : i === 0}"
+      detail="true"
+    >
+      <ion-label>
+        <div class="note">
+          <span [routerLink]="['../../', observation.id]">
+            {{ observation | effectiveXToDate | distanceToNow }}
+          </span>
+        </div>
+
+        <p>
+          @if(observationBundle.values?.[0]?.isHomongeneous &&
+          observationBundle.values?.[0]?.type === 'number'){
+          <span
+            [ngStyle]="
+                  {'color':observation.id === (selectedObservationId$ | async)
+                  ? 'var(--ion-color-primary)'
+                  : 'rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.4)' }"
+            class="chart-button"
+            (click)="
+            observationBundle.values?.[0]?.isHomongeneous && observationBundle.values?.[0]?.type === 'number' && observation.id
+            ? selectedObservationId = observation.id
+            : ''"
+          >
+            <ion-icon
+              [name]="observation.id === (selectedObservationId$ | async) ? 'radio-button-on-outline' : 'radio-button-off-outline'"
+              class="inline-icon"
+            ></ion-icon>
+          </span>
+          } @if(observation.bodySite; as bodySite){
+          <span>
+            <ion-icon name="body" class="inline-icon"></ion-icon>
+            {{ bodySite | bodySite }} •
+          </span>
+          }
+          <span #trigger>{{ observation | valueX }}</span>
+        </p>
+        @if(observation.note && observation.note[0]){
+        <p>{{ observation.note[0].text }}</p>
+        }
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  }
+</ion-content>
+}

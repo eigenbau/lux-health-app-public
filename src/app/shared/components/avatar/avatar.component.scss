@@ -1,0 +1,43 @@
+:host {
+  display: inline-grid; /* removes unwanted height */
+  --size: 0px;
+  --color: white;
+  --background-color: var(--ion-color-medium);
+  --background-gradient: linear-gradient(
+    0deg,
+    var(--ion-color-medium) 0%,
+    var(--ion-color-medium-tint) 100%
+  );
+  --background-image: none;
+
+  --spacing: calc(var(--size) / 18);
+  --border-width: calc(var(--spacing) * 1);
+}
+.offset-border {
+  display: inline-grid;
+  place-content: stretch;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: box-shadow ease-in 0.125s;
+  margin: calc(0 - var(--spacing));
+  padding: var(--spacing);
+}
+.offset-border:hover {
+  box-shadow: 0 0 0 var(--border-width) var(--ion-color-primary);
+}
+.avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  border-radius: inherit;
+  font-family: "Nunito", sans-serif;
+  background-size: cover;
+  font-size: calc(var(--size) / 2.25);
+  font-weight: 700;
+  color: var(--color);
+  width: var(--size);
+  height: var(--size);
+  background-color: var(--background-color);
+  background-image: var(--background-image), var(--background-gradient);
+}

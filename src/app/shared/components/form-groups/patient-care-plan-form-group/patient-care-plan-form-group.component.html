@@ -1,0 +1,54 @@
+<ion-list [lines]="lines">
+  <!-- Request status -->
+  <ion-item>
+    <app-value-set-select
+      label="Request status"
+      justify="space-between"
+      [codeFormControl]="carePlanFormGroup | formControl: 'status'"
+      preferredInputInterface="action-sheet"
+      [config]="{ valueSet: 'request-status', source: 'local' }"
+    ></app-value-set-select>
+  </ion-item>
+
+  <!-- Period -->
+  <ion-item (click)="startDate.openDatetime()" class="lux-input">
+    <app-datetime-input
+      #startDate
+      label="Start date:"
+      [max]="(carePlanFormGroup | formControl: ['period', 'end']).value"
+      presentation="date"
+      displayFormat="MMM d, y"
+      [datetimeFormControl]="
+        carePlanFormGroup | formControl: ['period', 'start']
+      "
+    ></app-datetime-input>
+  </ion-item>
+  <ion-item (click)="completionDate.openDatetime()" class="lux-input">
+    <app-datetime-input
+      #completionDate
+      label="Completion date:"
+      [min]="(carePlanFormGroup | formControl: ['period', 'start']).value"
+      presentation="date"
+      displayFormat="MMM d, y"
+      [datetimeFormControl]="carePlanFormGroup | formControl: ['period', 'end']"
+    ></app-datetime-input>
+  </ion-item>
+
+  <!-- Note -->
+  <ng-container [formGroup]="noteFormArray | formGroup">
+    @for (note of noteFormArray.controls; track note; let i = $index) {
+      <ion-item>
+        <ion-textarea
+          aria-label="Note"
+          placeholder="Note"
+          autoGrow="true"
+          autocapitalize="on"
+          rows="1"
+          [formControl]="noteFormArray | formControl: [i, 'text']"
+        ></ion-textarea>
+      </ion-item>
+    }
+  </ng-container>
+</ion-list>
+<!-- Activity Form Array -->
+<app-activity [patchValue]="patchValue"></app-activity>

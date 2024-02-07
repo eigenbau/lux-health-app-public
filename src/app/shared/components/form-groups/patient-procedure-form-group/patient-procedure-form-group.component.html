@@ -1,0 +1,131 @@
+<ion-list [lines]="lines">
+  <!-- Code - Start -->
+  <ion-item>
+    <app-value-set-select
+      label="Procedure:"
+      justify="space-between"
+      [codeableConceptFormControl]="procedureFormGroup | formControl: 'code'"
+      title="Procedures"
+      [config]="{
+        ecl: '< 71388002 | Procedure|',
+        valueSetCustomName: 'procedure'
+      }"
+    ></app-value-set-select>
+  </ion-item>
+  <!-- Code - End -->
+  <!-- BodySite - Start -->
+  <ng-container [formGroup]="bodySiteFormArray | formGroup">
+    @for (
+      bodySite of bodySiteFormArray.controls;
+      track bodySite;
+      let i = $index
+    ) {
+      <ion-item class="lux-input">
+        <app-value-set-select
+          label="Body site:"
+          justify="space-between"
+          [codeableConceptFormControl]="bodySiteFormArray | formControl: [i]"
+          title="Body sites"
+          [config]="{
+            ecl: '<< 442083009 | Anatomical or acquired body structure (body structure) |'
+          }"
+        ></app-value-set-select>
+      </ion-item>
+    }
+  </ng-container>
+  <!-- BodySite - End -->
+  <!-- ProcedurePeriod - Start -->
+  @if (
+    ((syncDateTimeWithParent$ | async) === false ||
+      (linkEncounter$ | async) === false) &&
+    (showPerformedPeriod$ | async) === true
+  ) {
+    <ion-item-sliding #effectivePeriodSlidingItem>
+      <ion-item-options side="start">
+        <ion-item-option
+          (click)="
+            toggleEffectiveTime(); effectivePeriodSlidingItem.closeOpened()
+          "
+        >
+          Toggle Time
+        </ion-item-option>
+      </ion-item-options>
+      <ion-item class="lux-input" (click)="performedPeriodStart.openDatetime()">
+        <app-datetime-input
+          #performedPeriodStart
+          label="Date & Time:"
+          [max]="now"
+          [presentation]="effectiveTime ? 'date-time' : 'date'"
+          [displayFormat]="effectiveTime ? 'h:mm a • MMM d, y' : 'MMM d, y'"
+          representation="complete"
+          [minuteValues]="minValues"
+          [datetimeFormControl]="
+            performedPeriodFormControl | formControl: ['start']
+          "
+        ></app-datetime-input>
+      </ion-item>
+    </ion-item-sliding>
+  }
+  @if ((syncDurationWithParent$ | async) === false) {
+    <ion-item>
+      <ion-select
+        label="Duration:"
+        justify="space-between"
+        interface="action-sheet"
+        [formControl]="durationFormControl"
+      >
+        @for (num of durationValues; track num) {
+          <ion-select-option [value]="num">{{ num }} Minutes</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+  }
+  <!-- ProcedurePeriod - End -->
+
+  <!-- Category - Start -->
+  @if (showCategory$ | async) {
+    <ion-item>
+      <app-value-set-select
+        label="Category:"
+        justify="space-between"
+        [codeableConceptFormControl]="
+          procedureFormGroup | formControl: 'category'
+        "
+        title="Procedures"
+        [config]="{ source: 'local', valueSet: 'procedure-category' }"
+      ></app-value-set-select>
+    </ion-item>
+  }
+  <!-- Category - End -->
+
+  <!-- Encounter - Start -->
+  <!-- <ion-item>
+    <ion-label>
+      <ion-icon name="calendar-outline" class="inline-icon"></ion-icon>
+      Related Encounter
+    </ion-label>
+    <app-reference-select
+      resourceType="Encounter"
+      [multiple]="false"
+      [referenceFormControl]="procedureFormGroup | formControl: ['encounter']"
+    ></app-reference-select>
+  </ion-item> -->
+  <!-- Encounter - Start -->
+
+  <!-- Note - Start -->
+  <ng-container [formGroup]="noteFormArray | formGroup">
+    @for (note of noteFormArray.controls; track note; let i = $index) {
+      <ion-item>
+        <ion-textarea
+          placeholder="Note"
+          aria-label="Note"
+          autoGrow="true"
+          autocapitalize="on"
+          rows="1"
+          [formControl]="noteFormArray | formControl: [i, 'text']"
+        ></ion-textarea>
+      </ion-item>
+    }
+  </ng-container>
+  <!-- Note - End -->
+</ion-list>

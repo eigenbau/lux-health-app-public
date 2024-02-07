@@ -1,0 +1,257 @@
+@if(condition$ | async; as condition){
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Condition</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+
+      <ion-button
+        [appPatientConditionInput]="condition"
+        class="can-hide show-on-collapse"
+      >
+        <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  @if((loading$ | async)){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+<app-scroll-to-top [scrollElement]="content"></app-scroll-to-top>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button>
+    <ion-icon name="add-outline"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-list side="top">
+    <ion-fab-button [appPatientGoalInput] [conditionId]="condition.id">
+      <ion-icon name="ribbon-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab-list>
+</ion-fab>
+
+<ion-content #content fullscreen>
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons collapse="true" slot="end">
+        <ion-button [appPatientConditionInput]="condition">
+          <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>Condition</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-list inset lines="inset">
+    <ion-item [appExpandable]>
+      <ion-label>{{ condition.code?.coding?.[0]?.display }}</ion-label>
+      <ion-icon name="heart-outline" slot="start"></ion-icon>
+    </ion-item>
+    @if(condition.bodySite){
+    <ion-item>
+      <ion-label>{{ condition.bodySite[0].coding?.[0]?.display }}</ion-label>
+      <ion-icon name="body" slot="start"></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+
+  <ion-list inset lines="inset">
+    @if(condition.onsetDateTime){
+    <ion-item-divider>
+      <ion-label>
+        {{ condition.onsetDateTime | distanceToNow }} • {{
+        condition.onsetDateTime | date: 'd MMM y' }}
+      </ion-label>
+      <ion-icon name="calendar-outline" slot="start"></ion-icon>
+    </ion-item-divider>
+    }
+
+    <ion-item>
+      <ion-label>
+        {{ condition.clinicalStatus?.coding?.[0]?.display | titlecase }} • {{
+        condition.verificationStatus?.coding?.[0]?.display | titlecase }}
+      </ion-label>
+      <ion-icon name="toggle" slot="start"></ion-icon>
+    </ion-item>
+
+    @if(condition.abatementDateTime){
+
+    <ion-item>
+      <ion-label>
+        {{ condition.abatementDateTime | distanceToNow }} • {{
+        condition.abatementDateTime | date: 'd MMM y' }}
+      </ion-label>
+      <ion-icon name="ban-outline" slot="start"></ion-icon>
+    </ion-item>
+    } @for(note of condition.note; track $index){
+    <ion-item [appExpandable] class="margin-fix">
+      <ion-label>{{ note.text }}</ion-label>
+      <ion-icon name="document-text-outline" slot="start"></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+  <!-- Related Goals -->
+  @if(condition | referencingResources: 'IGoal': ['addresses'] | async; as
+  goals){ @if(goals.length > 0){
+  <ion-list-header class="inset" lines="none">
+    <ion-label>
+      <ion-icon name="ribbon-outline" class="inline-icon"></ion-icon>
+      Related Goals
+    </ion-label>
+  </ion-list-header>
+  } @if(goals.length > 0){
+  <ion-list inset lines="inset">
+    @for(g of goals; track trackById; let i = $index){
+    <app-goal-item
+      [goal]="g"
+      [link]="['../../', 'goal', g.id || '']"
+      [lines]="i + 1 === goals.length ? 'none' : 'inset'"
+    ></app-goal-item>
+    }
+  </ion-list>
+  } }
+  <!-- Related Care plans -->
+  @if(condition | referencingResources: 'ICarePlan': ['addresses'] | async; as
+  carePlans){ @if(carePlans.length > 0){
+  <ion-list-header class="inset" lines="none">
+    <ion-label>
+      <ion-icon name="compass-outline" class="inline-icon"></ion-icon>
+      Related Care Plans
+    </ion-label>
+  </ion-list-header>
+  } @if(carePlans.length > 0){
+  <ion-list inset lines="inset">
+    @for(c of carePlans; track trackById; let i = $index){
+    <app-care-plan-item
+      [carePlan]="c"
+      [link]="['../../', 'care-plan', c.id || '']"
+      [lines]="i + 1 === carePlans.length ? 'none' : 'inset'"
+    ></app-care-plan-item>
+    }
+  </ion-list>
+  } }
+  <!-- Related Encounter -->
+  @if(condition.encounter | referencedResource: 'IEncounter' | async; as
+  encouter){
+  <ion-list-header class="inset" lines="none">
+    <ion-label>
+      <ion-icon name="calendar-outline" class="inline-icon"></ion-icon>
+      Related Encounter
+    </ion-label>
+  </ion-list-header>
+  <ion-list inset lines="inset">
+    <app-encounter-item
+      [encounter]="encouter"
+      [link]="[ '../../', 'encounter', encouter.id || '']"
+    ></app-encounter-item>
+  </ion-list>
+  }
+  <!-- History - Start -->
+  @if(history$ | async; as history){ @if(history && history.length > 0){
+  <ion-list-header class="inset">
+    <ion-label>
+      <ion-icon name="arrow-undo-outline" class="inline-icon"></ion-icon>
+      History
+    </ion-label>
+  </ion-list-header>
+  <ion-list inset="true" lines="none" class="history-list">
+    @for(entry of history; track i; let i = $index){
+    <ion-item [appExpandable] class="expanded">
+      <ion-label color="medium">
+        <p>
+          <strong>
+            {{ entry.meta?.lastUpdated ?? '' | distanceToNow }} • {{
+            entry.meta?.lastUpdated ?? '' | date: 'd MMM y' }}
+          </strong>
+        </p>
+        <!-- Condition - Start -->
+        @if(entry.code?.coding?.[0]?.display !==
+        history?.[i+1]?.code?.coding?.[0]?.display){
+        <p>
+          Condition:
+          <span>{{ entry?.code?.coding?.[0]?.display | titlecase }}</span>
+        </p>
+        }
+        <!-- Body site - Start -->
+        @if(entry.bodySite && !history?.[i+1]?.bodySite || entry.bodySite &&
+        history?.[i+1]?.bodySite && entry.bodySite[0].coding?.[0]?.display !==
+        history?.[i+1]?.bodySite?.[0]?.coding?.[0]?.display){
+        <p>
+          Body site:
+          <span>{{ entry.bodySite[0].coding?.[0]?.display | titlecase }}</span>
+        </p>
+        }
+        <!-- Clinical status - Start -->
+        @if(entry.clinicalStatus?.coding?.[0]?.display !==
+        history?.[i+1]?.clinicalStatus?.coding?.[0]?.display){
+        <p>
+          Clinical status:
+          <span>
+            {{ entry.clinicalStatus?.coding?.[0]?.display | titlecase }}
+          </span>
+        </p>
+        }
+        <!-- Verification status - Start -->
+        @if(entry.verificationStatus?.coding?.[0]?.display &&
+        entry.verificationStatus?.coding?.[0]?.display !== '' &&
+        entry.verificationStatus?.coding?.[0]?.display !==
+        history?.[i+1]?.verificationStatus?.coding?.[0]?.display){
+        <p>
+          Verification status:
+          <span>
+            {{ entry.verificationStatus?.coding?.[0]?.display | titlecase }}
+          </span>
+        </p>
+        }
+        <!-- Onset - Start -->
+        @if(entry.onsetDateTime !== history?.[i+1]?.onsetDateTime &&
+        entry?.onsetDateTime){
+        <p>
+          Onset:
+          <span>
+            {{ entry.onsetDateTime ?? '' | distanceToNow }} • {{
+            entry?.onsetDateTime | date: 'd MMM y' }}
+          </span>
+        </p>
+        }
+        <!-- Abatement - Start -->
+        @if(entry.abatementDateTime && ! history?.[i+1]?.abatementDateTime ||
+        entry?.abatementDateTime && entry?.abatementDateTime !==
+        history?.[i+1]?.abatementDateTime){
+        <p>
+          Abatement:
+          <span>
+            {{ entry.abatementDateTime ?? '' | distanceToNow }} • {{
+            entry?.abatementDateTime | date: 'd MMM y' }}
+          </span>
+        </p>
+        }
+        <!-- Note - Start -->
+        @if(entry.note && history?.[i+1]?.note && entry.note[0].text !==
+        history?.[i+1]?.note?.[0]?.text){
+        <p>Note: {{ entry.note[0].text }}</p>
+        }
+      </ion-label>
+      <ion-icon name="ellipse" slot="start" color="light"></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+  }}
+  <!-- Delete -->
+  <div class="center">
+    <ion-icon
+      (click)="deleteResource(condition.id)"
+      color="light"
+      name="trash-outline"
+    ></ion-icon>
+  </div>
+</ion-content>
+}

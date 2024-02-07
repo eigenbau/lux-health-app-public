@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="modalController.dismiss()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Search person</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar [formControl]="searchInput"></ion-searchbar>
+  </ion-toolbar>
+  <ion-progress-bar
+    [style.opacity]="(loading$ | async) ? 1 : 0"
+    type="indeterminate"
+  ></ion-progress-bar>
+</ion-header>
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+<ion-content #scrollElement fullscreen>
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  @if(personList$ | async; as personList){ @if(personList?.length === 0 &&
+  (loading$ | async) === false){
+  <ion-title>No matches found</ion-title>
+  }
+  <ion-list>
+    @for(e of personList; track trackById){
+    <ion-item
+      (click)="dismiss({
+          display: e.resource.name?.[0]?.given + ' ' + e.resource.name?.[0]?.family,
+          reference: e.resource.resourceType + '/' + e.resource.id
+        })"
+    >
+      <ion-label>
+        <h2>{{ e.resource | name }}</h2>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  }
+  <ion-infinite-scroll class="ion-padding-top">
+    <ion-infinite-scroll-content
+      loadingSpinner="lines"
+    ></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

@@ -1,0 +1,122 @@
+<ion-item-sliding #observationSlidingItem>
+  <ion-item [lines]="lines">
+    <app-value-set-select
+      [label]="isComponent ? 'Component code:' : 'Observation code:'"
+      justify="space-between"
+      [codeableConceptFormControl]="codeFormGroup"
+      title="SNOMED codes"
+      [config]="{
+        ecl: '<< 363787002 | Observable entity(observable entity)| or << 386053000 | Evaluation procedure(procedure)| or << 273249006 | Assessment scales(assessment scale)|'
+      }"
+    ></app-value-set-select>
+    <!-- code for LOINC observations { valueSet: 'observation-codes' } -->
+  </ion-item>
+
+  <ion-item-options
+    side="end"
+    (ionSwipe)="isComponent ? removeComponent() : null"
+  >
+    @if (isComponent) {
+      <ion-item-option color="primary" (click)="removeComponent()" expandable>
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-item-option>
+    }
+    @if (!isComponent) {
+      <ion-item-option
+        (click)="addComponent(); observationSlidingItem.closeOpened()"
+      >
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-item-option>
+    }
+  </ion-item-options>
+  <ion-item-options side="start">
+    @if (
+      (valueKey$ | async) === "valueQuantity" ||
+      (valueKey$ | async) === undefined
+    ) {
+      <ion-item-option
+        (click)="
+          setValueKeyControl('valueString');
+          observationSlidingItem.closeOpened()
+        "
+      >
+        <ion-icon slot="icon-only" name="text-outline"></ion-icon>
+      </ion-item-option>
+    }
+
+    @if (
+      (valueKey$ | async) === "valueString" || (valueKey$ | async) === undefined
+    ) {
+      <ion-item-option
+        (click)="
+          setValueKeyControl('valueQuantity');
+          observationSlidingItem.closeOpened()
+        "
+      >
+        <ion-icon slot="icon-only" name="pulse-outline"></ion-icon>
+      </ion-item-option>
+    }
+    @if ((valueKey$ | async) !== undefined && !isComponent) {
+      <ion-item-option
+        color="primary"
+        (click)="
+          setValueKeyControl(undefined); observationSlidingItem.closeOpened()
+        "
+      >
+        Reset
+      </ion-item-option>
+    }
+  </ion-item-options>
+</ion-item-sliding>
+<!-- valueQuantity - Start -->
+@if ((valueKey$ | async) === "valueQuantity") {
+  <ion-item [lines]="lines">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <app-value-set-select
+            placeholder="Measurement unit"
+            ariaLabel="Measurement unit"
+            title="UCUM units"
+            [codeFormControl]="
+              valueXFormGroup | formControl: ['valueQuantity', 'code']
+            "
+            [displayFormControl]="
+              valueXFormGroup | formControl: ['valueQuantity', 'unit']
+            "
+            [systemFormControl]="
+              valueXFormGroup | formControl: ['valueQuantity', 'system']
+            "
+            [config]="{ valueSet: 'ucum-units' }"
+          ></app-value-set-select>
+        </ion-col>
+
+        <ion-col size="6">
+          <ion-input
+            placeholder="Numeric value"
+            inputmode="decimal"
+            type="number"
+            style="text-align: end"
+            [formControl]="
+              valueXFormGroup | formControl: ['valueQuantity', 'value']
+            "
+          ></ion-input>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-item>
+}
+<!-- valueQuantity - End -->
+<!-- valueString - Start -->
+@if ((valueKey$ | async) === "valueString") {
+  <ion-item [lines]="lines">
+    <ion-textarea
+      placeholder="Descriptive observation"
+      aria-label="Descriptive observation"
+      autoGrow="true"
+      autocapitalize="on"
+      [formControl]="valueXFormGroup | formControl: ['valueString']"
+    ></ion-textarea>
+  </ion-item>
+}
+<!-- valueString - End -->

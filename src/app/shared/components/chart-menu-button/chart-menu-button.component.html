@@ -1,0 +1,122 @@
+@if (personBundle$ | async; as personBundle) {
+  <ion-button class="can-hide" (click)="popoverMenu.present($event)">
+    <ion-icon slot="icon-only" name="medical-outline"></ion-icon>
+  </ion-button>
+
+  <ion-popover
+    #popoverMenu
+    [dismissOnSelect]="true"
+    translucent
+    [arrow]="false"
+  >
+    <ng-template>
+      <ion-content forceOverscroll="false">
+        <ion-list>
+          <ion-item
+            lines="none"
+            [button]="true"
+            (click)="
+              onGoToChart(personBundle?.person?.id, personBundle?.patient?.id)
+            "
+          >
+            <ion-icon slot="start" name="medical-outline"></ion-icon>
+            <ion-label>Chart overview</ion-label>
+          </ion-item>
+          <ion-item-divider></ion-item-divider>
+          <ion-item
+            [button]="true"
+            (click)="
+              onGoToChartSubPage(
+                personBundle.person.id,
+                personBundle.patient?.id,
+                'condition'
+              )
+            "
+          >
+            <ion-icon slot="start" name="fitness-outline"></ion-icon>
+            <ion-label>Conditions</ion-label>
+          </ion-item>
+          <ion-item
+            [button]="true"
+            (click)="
+              onGoToChartSubPage(
+                personBundle.person.id,
+                personBundle.patient?.id,
+                'goal'
+              )
+            "
+          >
+            <ion-icon slot="start" name="ribbon-outline"></ion-icon>
+            <ion-label>Goals</ion-label>
+          </ion-item>
+          <ion-item
+            [button]="true"
+            (click)="
+              onGoToChartSubPage(
+                personBundle.person.id,
+                personBundle.patient?.id,
+                'care-plan'
+              )
+            "
+          >
+            <ion-icon slot="start" name="compass-outline"></ion-icon>
+            <ion-label>Care Plans</ion-label>
+          </ion-item>
+          <ion-item
+            [button]="true"
+            (click)="
+              onGoToChartSubPage(
+                personBundle.person.id,
+                personBundle.patient?.id,
+                'encounter'
+              )
+            "
+          >
+            <ion-icon slot="start" name="calendar-outline"></ion-icon>
+            <ion-label>Encounters</ion-label>
+          </ion-item>
+          <ion-item
+            [button]="true"
+            (click)="
+              onGoToChartSubPage(
+                personBundle.person.id,
+                personBundle.patient?.id,
+                'procedure'
+              )
+            "
+          >
+            <ion-icon slot="start" name="medkit-outline"></ion-icon>
+            <ion-label>Procedures</ion-label>
+          </ion-item>
+          <ion-item
+            [button]="true"
+            (click)="
+              onGoToChartSubPage(
+                personBundle.person.id,
+                personBundle.patient?.id,
+                'document-reference'
+              )
+            "
+          >
+            <ion-icon slot="start" name="attach-outline"></ion-icon>
+            <ion-label>Documents</ion-label>
+          </ion-item>
+          <ion-item
+            [button]="true"
+            lines="none"
+            (click)="
+              onGoToChartSubPage(
+                personBundle.person.id,
+                personBundle.patient?.id,
+                'observation'
+              )
+            "
+          >
+            <ion-icon slot="start" name="pulse-outline"></ion-icon>
+            <ion-label>Observations</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
+}

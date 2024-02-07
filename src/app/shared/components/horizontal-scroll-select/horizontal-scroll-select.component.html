@@ -1,0 +1,22 @@
+<div class="grid-container">
+  <div class="fixed">
+    <ul>
+      <li class="card">
+        <ion-chip [ngClass]="{ active: noneSelected() }" (click)="onReset()">
+          <ion-label>Clear</ion-label>
+        </ion-chip>
+      </li>
+    </ul>
+  </div>
+  <div class="scrolling-wrapper" #wrapper>
+    <ul>
+      @for (option of options; track $index) {
+        <li class="card" (click)="onSelect(option)">
+          <ion-chip [ngClass]="{ active: isSelected(option) }">
+            <ion-label>{{ label(option) }}</ion-label>
+          </ion-chip>
+        </li>
+      }
+    </ul>
+  </div>
+</div>

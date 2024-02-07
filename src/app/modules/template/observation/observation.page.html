@@ -1,0 +1,68 @@
+<ion-header [appStandardHeader]="scrollElement">
+  <ion-toolbar>
+    <ion-buttons slot="start"></ion-buttons>
+    <ion-title>Observation templates</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [appTemplateObservationInput]>
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <!-- <ion-toolbar>
+    <app-nav></app-nav>
+  </ion-toolbar> -->
+  <ion-toolbar>
+    <ion-searchbar showCancelButton="never" #searchbar></ion-searchbar>
+  </ion-toolbar>
+  <ion-toolbar>
+    <app-horizontal-scroll-select
+      [options]="observationCategory$ | async"
+      [labelPath]="['coding', 0, 'display']"
+      #categorySelection
+    ></app-horizontal-scroll-select>
+  </ion-toolbar>
+</ion-header>
+
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+<ion-content #scrollElement fullscreen>
+  <app-observation-list
+    [observations]="list$
+    | async
+    | observationFilter: { searchInput: searchbar.value, category: categorySelection.selected }"
+    [listHeader]="false"
+  >
+    <ng-template
+      #templateListItem
+      let-observation
+      let-lastItemInGroup="lastItemInGroup"
+      let-lastItem="lastItem"
+    >
+      <ion-item-sliding #slidingItem>
+        <ion-item-options
+          side="end"
+          (ionSwipe)="onDeleteObservationTemplate(observation.firestoreId); slidingItem.closeOpened()"
+        >
+          <ion-item-option
+            color="primary"
+            (click)="onDeleteObservationTemplate(observation.firestoreId); slidingItem.closeOpened()"
+            expandable="true"
+          >
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+        <ion-item
+          [appTemplateObservationInput]="observation"
+          [lines]="lastItem ? 'full': lastItemInGroup ? 'none' : 'inset'"
+        >
+          <ion-label>{{ observation.code.coding[0].display }}</ion-label>
+          <ion-icon
+            name="ellipsis-horizontal"
+            slot="end"
+            color="primary"
+          ></ion-icon>
+        </ion-item>
+      </ion-item-sliding>
+    </ng-template>
+  </app-observation-list>
+</ion-content>

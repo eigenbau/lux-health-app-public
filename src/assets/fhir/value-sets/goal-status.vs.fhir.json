@@ -1,0 +1,88 @@
+{
+  "resourceType": "ValueSet",
+  "meta": {
+    "lastUpdated": "2021-07-21T10:30:00.900+10:00",
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
+    ]
+  },
+  "url": "http://hl7.org/fhir/ValueSet/goal-status",
+  "identifier": [
+    {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:oid:2.16.840.1.113883.4.642.3.271"
+    }
+  ],
+  "version": "4.0.1",
+  "name": "GoalLifecycleStatus",
+  "title": "GoalLifecycleStatus",
+  "status": "draft",
+  "experimental": false,
+  "expansion": {
+    "identifier": "1d6b699c-818b-4515-b6ec-d74dd388ea86",
+    "timestamp": "2022-03-05T04:28:56+10:00",
+    "total": 9,
+    "offset": 0,
+    "parameter": [
+      {
+        "name": "version",
+        "valueUri": "http://hl7.org/fhir/goal-status|4.0.1"
+      },
+      {
+        "name": "count",
+        "valueInteger": 2147483647
+      },
+      {
+        "name": "offset",
+        "valueInteger": 0
+      }
+    ],
+    "contains": [
+      {
+        "system": "http://hl7.org/fhir/goal-status",
+        "code": "accepted",
+        "display": "Accepted"
+      },
+      {
+        "system": "http://hl7.org/fhir/goal-status",
+        "code": "active",
+        "display": "Active"
+      },
+      {
+        "system": "http://hl7.org/fhir/goal-status",
+        "code": "cancelled",
+        "display": "Cancelled"
+      },
+      {
+        "system": "http://hl7.org/fhir/goal-status",
+        "code": "completed",
+        "display": "Completed"
+      },
+      {
+        "system": "http://hl7.org/fhir/goal-status",
+        "code": "entered-in-error",
+        "display": "Entered in Error"
+      },
+      {
+        "system": "http://hl7.org/fhir/goal-status",
+        "code": "on-hold",
+        "display": "On Hold"
+      },
+      {
+        "system": "http://hl7.org/fhir/goal-status",
+        "code": "planned",
+        "display": "Planned"
+      },
+      {
+        "system": "http://hl7.org/fhir/goal-status",
+        "code": "proposed",
+        "display": "Proposed"
+      },
+      {
+        "system": "http://hl7.org/fhir/goal-status",
+        "code": "rejected",
+        "display": "Rejected"
+      }
+    ]
+  }
+}

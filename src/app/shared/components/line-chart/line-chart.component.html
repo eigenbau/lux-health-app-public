@@ -1,0 +1,98 @@
+@if (chartOptions$ | async; as chartOptions) {
+  <ion-toolbar>
+    <ion-segment (ionChange)="onZoomClick($event)" [value]="zoomLevel$ | async">
+      <ion-segment-button value="day">
+        <ion-label>D</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="week">
+        <ion-label>W</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="month">
+        <ion-label>M</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="year">
+        <ion-label>Y</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="all">
+        <ion-icon name="infinite-outline"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+  <ion-list inset>
+    <ion-item class="header">
+      <ion-note slot="end">
+        @if (selectedObservation$ | async; as observation) {
+          {{ observation | effectiveXToDate | date: "d MMM y • h:mm a" }} •
+          {{ observation | effectiveXToDate | distanceToNow }}
+        }
+        @if ((selectedObservation$ | async) === undefined) {
+          {{ visibleRange$ | async }} •
+          {{ (visibleObservations$ | async)?.total }} record{{
+            (visibleObservations$ | async)?.total !== 1 ? "s" : null
+          }}
+        }
+      </ion-note>
+    </ion-item>
+    <ion-item class="ion-no-padding">
+      <div class="grid-container">
+        <div class="scrolling-wrapper">
+          <!-- Build HTML template from observationBundle -->
+          @if (visibleCartSeries$ | async; as visibleCartSeries) {
+            <ul>
+              @for (series of visibleCartSeries; track i; let i = $index) {
+                <li
+                  [style]="
+                    'color:' +
+                    chartOptions.colors?.[
+                      chartOptions.colors &&
+                      chartOptions.colors.length >= visibleCartSeries.length
+                        ? i
+                        : 0
+                    ]
+                  "
+                  class="card"
+                >
+                  @if (visibleCartSeries.length > 1) {
+                    <p>
+                      @if (series?.bodySite) {
+                        <span>{{ series.bodySite | bodySite }} •</span>
+                      }
+                      {{ series.name }}
+                    </p>
+                  }
+                  <h1>
+                    {{
+                      series
+                        | apexchartsSeriesValue
+                          : (observationId$ | async) || undefined
+                    }}
+                  </h1>
+                  <p class="truncate">
+                    {{ series.code | valueCodeFormat: 2 }}
+                  </p>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+    </ion-item>
+  </ion-list>
+  @if (series$ | async; as series) {
+    <apx-chart
+      [series]="series"
+      [states]="chartOptions.states || {}"
+      [colors]="chartOptions.colors || []"
+      [chart]="chartOptions.chart || { type: 'line' }"
+      [xaxis]="chartOptions.xaxis || {}"
+      [yaxis]="chartOptions.yaxis || {}"
+      [stroke]="chartOptions.stroke || {}"
+      [tooltip]="chartOptions.tooltip || {}"
+      [dataLabels]="chartOptions.dataLabels || {}"
+      [markers]="chartOptions.markers || {}"
+      [legend]="chartOptions.legend || {}"
+      [grid]="chartOptions.grid || {}"
+      [plotOptions]="chartOptions.plotOptions || {}"
+    ></apx-chart>
+  }
+}

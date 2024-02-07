@@ -1,0 +1,77 @@
+<ion-list [lines]="lines">
+  <!-- Target -->
+  <ion-item>
+    <ion-textarea
+      placeholder="Target (descriptive)"
+      aria-label="Target (descriptive)"
+      autoGrow="true"
+      autocapitalize="on"
+      rows="1"
+      [formControl]="goalFormGroup | formControl: ['target', 0, 'detailString']"
+    ></ion-textarea>
+  </ion-item>
+
+  <!-- Addresses -->
+  <ion-item>
+    <app-reference-select
+      label="Addressed condition:"
+      justify="space-between"
+      resourceType="Condition"
+      [multiple]="false"
+      [referenceFormControl]="goalFormGroup | formControl: ['addresses', 0]"
+      (resourcesSelected)="onResourcesSelected($event)"
+    ></app-reference-select>
+  </ion-item>
+
+  <!-- StartDate - Start -->
+  <ion-item class="lux-input" (click)="startDate.openDatetime()">
+    <app-datetime-input
+      #startDate
+      label="Start:"
+      presentation="date"
+      displayFormat="MMM d, y"
+      [datetimeFormControl]="goalFormGroup | formControl: ['startDate']"
+    ></app-datetime-input>
+  </ion-item>
+
+  <!-- LifecycleStatus - Start -->
+  <ion-item>
+    <app-value-set-select
+      label="Goal status:"
+      justify="space-between"
+      [codeFormControl]="goalFormGroup | formControl: 'lifecycleStatus'"
+      preferredInputInterface="action-sheet"
+      [config]="{ source: 'local', valueSet: 'goal-status' }"
+    ></app-value-set-select>
+  </ion-item>
+
+  <!-- AchiementStatus - Start -->
+  @if (showAchieventStatus$ | async) {
+    <ion-item>
+      <app-value-set-select
+        label="Achievement status:"
+        justify="space-between"
+        [codeableConceptFormControl]="achievementStatusFormControl"
+        preferredInputInterface="action-sheet"
+        [config]="{ source: 'local', valueSet: 'goal-achievement' }"
+      ></app-value-set-select>
+    </ion-item>
+  }
+
+  <!-- Note - Start -->
+  <ng-container [formGroup]="noteFormArray | formGroup">
+    @for (note of noteFormArray.controls; track note; let i = $index) {
+      <ion-item>
+        <ion-textarea
+          placeholder="Note"
+          aria-label="Note"
+          autoGrow="true"
+          autocapitalize="on"
+          rows="1"
+          [formControl]="noteFormArray | formControl: [i, 'text']"
+        ></ion-textarea>
+      </ion-item>
+    }
+  </ng-container>
+  <!-- Note - End -->
+</ion-list>

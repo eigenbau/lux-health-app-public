@@ -1,0 +1,106 @@
+@if (observationFormArray) {
+  @if (patchValue$ | async; as patchValue) {
+    @if (patchValue.length > 0) {
+      <ng-container [formGroup]="observationFormArray | formGroup">
+        <app-observation-list
+          [observations]="patchValue"
+          [hasFormControls]="true"
+          [listHeader]="false"
+        >
+          <ng-template
+            #templateListItem
+            let-observation
+            let-lastItemInGroup="lastItemInGroup"
+            let-lastItem="lastItem"
+          >
+            <ion-item-sliding #observationSlidingItem>
+              <ion-item
+                [class.active]="activeObservationIndex === observation.index"
+                [class.grey]="
+                  activeObservationIndex !== observation.index &&
+                  activeObservationIndex > -1
+                "
+                [lines]="
+                  activeObservationIndex === observation.index ||
+                  lastItem ||
+                  lastItemInGroup
+                    ? 'none'
+                    : 'inset'
+                "
+              >
+                <ion-label (click)="toggleObservationInput(observation.index)">
+                  {{ observation.code.coding[0].display }}
+                  @if (observation.id) {
+                    <ion-icon
+                      class="inline-icon"
+                      size="small"
+                      color="medium"
+                      name="lock-closed"
+                    ></ion-icon>
+                  }
+                </ion-label>
+                @if (activeObservationIndex === observation.index) {
+                  <ion-button
+                    (click)="observationFormGroup.toggleSyncDateTime()"
+                    slot="end"
+                  >
+                    <ion-icon
+                      slot="icon-only"
+                      name="calendar"
+                      color="primary"
+                      size="small"
+                    ></ion-icon>
+                  </ion-button>
+                  <ion-button
+                    (click)="observationFormGroup.toggleNote()"
+                    slot="end"
+                  >
+                    <ion-icon
+                      slot="icon-only"
+                      name="document"
+                      size="small"
+                      color="primary"
+                    ></ion-icon>
+                  </ion-button>
+                }
+              </ion-item>
+              @if (!observation.id) {
+                <ion-item-options
+                  side="end"
+                  (ionSwipe)="
+                    removeObservation(observation.index);
+                    observationSlidingItem.closeOpened()
+                  "
+                >
+                  <ion-item-option
+                    color="primary"
+                    (click)="
+                      removeObservation(observation.index);
+                      observationSlidingItem.closeOpened()
+                    "
+                    expandable
+                  >
+                    <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                  </ion-item-option>
+                </ion-item-options>
+              }
+            </ion-item-sliding>
+            <app-patient-observation-form-group
+              #observationFormGroup
+              class="can-hide"
+              [class.hidden]="activeObservationIndex !== observation.index"
+              [parentFormPath]="[observation.index]"
+              [patchValue]="observation"
+              [dateTime]="dateTime"
+              lines="inset"
+            ></app-patient-observation-form-group>
+            <ion-item
+              lines="none"
+              [class.hidden]="activeObservationIndex !== observation.index"
+            ></ion-item>
+          </ng-template>
+        </app-observation-list>
+      </ng-container>
+    }
+  }
+}

@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Documents</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+
+      <ion-button
+        [appPatientDocumentReferenceInput]
+        class="can-hide show-on-collapse"
+      >
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <!-- <ion-toolbar>
+    <ion-searchbar [formControl]="searchInput"></ion-searchbar>
+  </ion-toolbar> -->
+  @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+<ion-content #scrollElement fullscreen>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons collapse="true" slot="end">
+        <ion-button [appPatientDocumentReferenceInput]>
+          <ion-icon slot="icon-only" name="add"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title size="large">Documents</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- No documents found -->
+  @if((documentReferenceList$ | async)?.length === 0 && (loading$ | async) ===
+  false){
+  <ion-list>
+    <ion-item lines="none" class="list-note">
+      <ion-label>No documents found</ion-label>
+    </ion-item>
+  </ion-list>
+  }
+
+  <!-- Documents -->
+  @if(documentReferenceList$ | async; as docList){
+  <ion-list>
+    @for(d of docList; track trackById; let i = $index){
+    <app-document-reference-item
+      [link]="[d.id || '']"
+      [documentReference]="d"
+      [lines]="i + 1 === docList.length ? 'none' : 'inset'"
+    ></app-document-reference-item>
+    }
+  </ion-list>
+  }
+</ion-content>

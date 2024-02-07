@@ -1,0 +1,1 @@
+export const ENCOUNTER_DURATION_DEFAULT = 30;

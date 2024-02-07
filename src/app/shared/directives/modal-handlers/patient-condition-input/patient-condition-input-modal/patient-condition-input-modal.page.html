@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="onSubmit()" [disabled]="form.invalid">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Condition</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      @if(condition.encounter?.reference){
+      <ion-button (click)="conditionFormGroup.toggleEncounterLink()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          [name]="(conditionFormGroup.linkEncounter$ | async) ? 'link-outline' : 'unlink-outline'"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      }
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="conditionFormGroup.toogleOnsetDateTime()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="calendar"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      <ion-button slot="end" (click)="conditionFormGroup.toggleBodySite()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="body"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+
+      <ion-button slot="end" (click)="conditionFormGroup.toggleNote()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="document"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container [formGroup]="form">
+    <app-patient-condition-form-group
+      #conditionFormGroup
+      [patchValue]="condition"
+      lines="inset"
+    ></app-patient-condition-form-group>
+  </ng-container>
+</ion-content>

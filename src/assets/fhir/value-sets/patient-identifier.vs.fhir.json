@@ -1,0 +1,50 @@
+{
+  "resourceType": "ValueSet",
+  "language": "en",
+  "name": "Patient Identifier Type Codes",
+  "title": "PatientIdentifierType",
+  "status": "active",
+  "experimental": false,
+  "expansion": {
+    "timestamp": "2021-04-15T06:33:26+10:00",
+    "total": 7,
+    "offset": 0,
+    "contains": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+        "code": "DL",
+        "display": "Driver's license number"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+        "code": "PPN",
+        "display": "Passport number"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+        "code": "MR",
+        "display": "Medical record number"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+        "code": "NIIP",
+        "display": "National Insurance Payor Identifier (Payor)"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+        "code": "JHN",
+        "display": "Jurisdictional health number (Canada)"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+        "code": "HC",
+        "display": "Health Card Number"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+        "code": "IND",
+        "display": "Indigenous/Aboriginal"
+      }
+    ]
+  }
+}

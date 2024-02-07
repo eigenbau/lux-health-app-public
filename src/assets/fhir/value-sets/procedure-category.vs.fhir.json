@@ -1,0 +1,79 @@
+{
+  "resourceType": "ValueSet",
+  "meta": {
+    "lastUpdated": "2021-07-21T10:28:50.378+10:00",
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/shareablevalueset-adjusted"
+    ]
+  },
+  "url": "http://hl7.org/fhir/ValueSet/procedure-category-adjusted",
+  "identifier": [
+    {
+      "system": "urn:ietf:rfc:3986-adjusted",
+      "value": "urn:oid:2.16.840.1.113883.4.642.3.430-adjusted"
+    }
+  ],
+  "version": "4.0.1",
+  "name": "ProcedureCategoryCodes(SNOMEDCT)",
+  "title": "Procedure Category Codes (SNOMED CT)",
+  "status": "draft",
+  "experimental": false,
+  "copyright": "This resource includes content from SNOMED Clinical Terms® (SNOMED CT®) which is copyright of the International Health Terminology Standards Development Organisation (IHTSDO). Implementers of these specifications must have the appropriate SNOMED CT Affiliate license - for more information contact http://www.snomed.org/snomed-ct/get-snomed-ct or info@snomed.org",
+  "expansion": {
+    "identifier": "f1e33655-4ff5-47d2-b005-7824ff8b866e",
+    "timestamp": "2022-03-09T14:35:05+10:00",
+    "total": 7,
+    "offset": 0,
+    "parameter": [
+      {
+        "name": "version",
+        "valueUri": "http://snomed.info/sct|http://snomed.info/sct/32506021000036107/version/20220228"
+      },
+      {
+        "name": "count",
+        "valueInteger": 2147483647
+      },
+      {
+        "name": "offset",
+        "valueInteger": 0
+      }
+    ],
+    "contains": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "24642003",
+        "display": "Psychiatry procedure or service"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "409063005",
+        "display": "Counselling"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "409073007",
+        "display": "Education"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "387713003",
+        "display": "Surgical procedure"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "103693007",
+        "display": "Diagnostic procedure"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "410606002",
+        "display": "Social service procedure"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "91251008",
+        "display": "Physical therapy procedure"
+      }
+    ]
+  }
+}

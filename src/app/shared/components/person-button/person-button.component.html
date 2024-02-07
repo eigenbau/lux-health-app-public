@@ -1,0 +1,13 @@
+<ion-button shape="round" color="light" fill="solid" appPersonDetails>
+  @if (person$ | async; as person) {
+    <ion-text color="primary" class="hide-on-collapse can-hide">
+      {{ person | name }}
+      @if (patient$ | async; as patient) {
+        @if (patient.birthDate) {
+          <span>• {{ patient | age }} yo</span>
+        }
+      }
+    </ion-text>
+  }
+  <ion-icon slot="end" name="person-circle-outline" color="primary"></ion-icon>
+</ion-button>

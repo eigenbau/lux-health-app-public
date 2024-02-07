@@ -1,0 +1,23 @@
+<ion-list [inset]="inset" [lines]="lines">
+  @for (row of rowsArray; track $index) {
+    <ng-template #defaultListItem>
+      <ion-item [detail]="detail">
+        <ion-label>
+          <h2>
+            <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+          </h2>
+          <p>
+            <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+          </p>
+        </ion-label>
+      </ion-item>
+    </ng-template>
+
+    <ng-container
+      [ngTemplateOutlet]="listItem || defaultListItem"
+    ></ng-container>
+  }
+  @if (!inset) {
+    <div class="full-line"></div>
+  }
+</ion-list>

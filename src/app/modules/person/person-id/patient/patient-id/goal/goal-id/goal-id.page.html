@@ -1,0 +1,167 @@
+@if(goal$ | async; as goal){
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Goal</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+
+      <ion-button
+        [appPatientGoalInput]="goal"
+        class="can-hide show-on-collapse"
+      >
+        <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+<app-scroll-to-top [scrollElement]="content"></app-scroll-to-top>
+
+<ion-content #content fullscreen>
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons collapse="true" slot="end">
+        <ion-button [appPatientGoalInput]="goal">
+          <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>Goal</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-list inset lines="inset">
+    @if(goal.target && goal.target.length > 0 && goal.target[0].detailString){
+    <ion-item [appExpandable] class="expanded">
+      <ion-label>{{ goal.target[0].detailString }}</ion-label>
+      <ion-icon name="flag-outline" slot="start"></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+
+  <ion-list inset lines="inset">
+    @for(ref of goal.addresses; track $index){
+    <ion-item
+      [appExpandable]
+      [routerLink]="['../../', 'condition', ref.reference | id]"
+    >
+      <ion-label>{{ goal.description.coding?.[0]?.display }}</ion-label>
+      <ion-icon name="fitness-outline" slot="start"></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+
+  <ion-list inset lines="inset">
+    <ion-item>
+      <ion-label>
+        {{goal.startDate|distanceToNow}} • {{goal.startDate|date:'d MMM y'}}
+      </ion-label>
+      <ion-icon name="rocket-outline" slot="start"></ion-icon>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>{{ goal.lifecycleStatus | titlecase }}</ion-label>
+      <ion-icon name="toggle" slot="start"></ion-icon>
+    </ion-item>
+
+    @if(goal?.achievementStatus){
+    <ion-item>
+      <ion-label>
+        {{ goal.achievementStatus?.coding?.[0]?.display | titlecase }}
+      </ion-label>
+      <ion-icon name="pulse-outline" slot="start"></ion-icon>
+    </ion-item>
+    } @for(note of goal.note; track $index){
+    <ion-item [appExpandable] class="margin-fix">
+      <ion-label>{{ note.text }}</ion-label>
+      <ion-icon name="document-text-outline" slot="start"></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+
+  <!-- Related Care plans -->
+  @if(goal | referencingResources: 'ICarePlan': ['activity', 'detail', 'goal'] |
+  async; as carePlans){ @if(carePlans.length > 0){
+  <ion-list-header class="inset" lines="none">
+    <ion-label>
+      <ion-icon name="compass-outline" class="inline-icon"></ion-icon>
+      Related Care Plans
+    </ion-label>
+  </ion-list-header>
+  }
+  <ion-list inset lines="inset">
+    @for(c of carePlans; track trackById; let i = $index){
+    <app-care-plan-item
+      [carePlan]="c"
+      [link]="['../../', 'care-plan', c.id || '']"
+      [lines]="i + 1 === carePlans.length ? 'none' : 'inset'"
+    ></app-care-plan-item>
+    }
+  </ion-list>
+  }
+
+  <!-- History - Start -->
+  @if(history$ | async; as history){ @if(history && history.length > 0){
+  <ion-list-header class="inset">
+    <ion-label>
+      <ion-icon name="arrow-undo-outline" class="inline-icon"></ion-icon>
+      History
+    </ion-label>
+  </ion-list-header>
+  <ion-list inset="true" lines="none" class="history-list">
+    @for(entry of history; track i; let i = $index){
+    <ion-item [appExpandable] class="expanded">
+      <ion-label color="medium">
+        <p>
+          <strong>
+            {{ entry.meta?.lastUpdated | distanceToNow }} • {{
+            entry.meta?.lastUpdated | date: 'd MMM y' }}
+          </strong>
+        </p>
+        <!-- Lifecycle status - Start -->
+        @if(entry.lifecycleStatus !== history?.[i+1]?.lifecycleStatus){
+        <p>
+          Lifecycle status:
+          <span>{{ entry?.lifecycleStatus | titlecase }}</span>
+        </p>
+        }
+        <!-- Achievement status - Start -->
+        @if(entry.achievementStatus?.coding?.[0]?.code !==
+        history?.[i+1]?.achievementStatus?.coding?.[0]?.code){
+        <p>
+          Achievement status:
+          <span>
+            {{ entry.achievementStatus?.coding?.[0]?.display | titlecase }}
+          </span>
+        </p>
+        }
+        <!-- Note - Start -->
+        @if(entry.note && history?.[i+1]?.note && entry.note[0].text !==
+        history?.[i+1]?.note?.[0]?.text){
+        <p>Note: {{ entry.note[0].text }}</p>
+        }
+      </ion-label>
+      <ion-icon name="ellipse" slot="start" color="light"></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+  }}
+  <!-- Delete -->
+  <div class="center">
+    <ion-icon
+      (click)="deleteResource(goal.id)"
+      color="light"
+      name="trash-outline"
+    ></ion-icon>
+  </div>
+</ion-content>
+}

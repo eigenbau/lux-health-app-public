@@ -1,0 +1,58 @@
+<ion-list-header>
+  <ion-label>Patient identifiers</ion-label>
+  <ion-button class="plus" (click)="identifierFormArrayHelper.push()">
+    <ion-icon name="add" color="primary" slot="icon-only"></ion-icon>
+  </ion-button>
+</ion-list-header>
+
+@if (identifierFormArray.length > 0) {
+  <ion-list [formGroup]="identifierFormArray | formGroup">
+    @for (
+      identifier of identifierFormArray.controls;
+      track identifier;
+      let i = $index
+    ) {
+      <ion-item-sliding [formGroupName]="i">
+        <ion-item>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="6">
+                <app-value-set-select
+                  placeholder="Type"
+                  ariaLabel="Type"
+                  [codeableConceptFormControl]="
+                    identifierFormArray | formControl: [i, 'type']
+                  "
+                  [config]="{ source: 'local', valueSet: 'patient-identifier' }"
+                ></app-value-set-select>
+              </ion-col>
+
+              <ion-col size="6">
+                <ion-input
+                  class="ion-text-end"
+                  type="text"
+                  formControlName="value"
+                  placeholder="Value"
+                  aria-label="Value"
+                />
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+
+        <ion-item-options
+          side="end"
+          (ionSwipe)="identifierFormArrayHelper.removeAt(i)"
+        >
+          <ion-item-option
+            color="primary"
+            (click)="identifierFormArrayHelper.removeAt(i)"
+            expandable
+          >
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    }
+  </ion-list>
+}

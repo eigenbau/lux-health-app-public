@@ -1,0 +1,68 @@
+@if (observationsByCategory) {
+  @if (listHeader) {
+    <ion-list-header lines="none" [ngClass]="{ inset: inset }">
+      <ng-template #defaultHeader>
+        <ion-label>Observations</ion-label>
+      </ng-template>
+      <ng-container
+        [ngTemplateOutlet]="templateHeader || defaultHeader"
+      ></ng-container>
+    </ion-list-header>
+  }
+
+  <ion-list [inset]="inset" lines="inset">
+    @if (
+      observationsByCategory.length === 0 &&
+      !loading &&
+      !hideNoObservationsFound
+    ) {
+      <ion-item lines="none" class="list-note">
+        <ion-label>No observations found</ion-label>
+      </ion-item>
+    }
+    @for (
+      category of observationsByCategory;
+      track category;
+      let categoryIndex = $index
+    ) {
+      <ion-item-group>
+        <ion-item-divider sticky color="light">
+          <ion-label>
+            {{ category.code?.coding?.[0]?.display | titlecase }}
+          </ion-label>
+        </ion-item-divider>
+        @for (
+          observation of category.observations;
+          track observation;
+          let i = $index
+        ) {
+          <ng-template #defaultListItem let-observation>
+            <ion-item
+              [lines]="
+                i + 1 === category.observations?.length &&
+                categoryIndex + 1 === observationsByCategory.length
+                  ? 'full'
+                  : 'inset'
+              "
+            >
+              <ion-label>
+                {{ observation.code.coding[0].display }}
+              </ion-label>
+            </ion-item>
+          </ng-template>
+
+          <ng-container
+            [ngTemplateOutlet]="templateListItem || defaultListItem"
+            [ngTemplateOutletContext]="{
+              $implicit: observation,
+              lastItemInGroup: i + 1 === category.observations?.length,
+              lastItem:
+                i + 1 === category.observations?.length &&
+                categoryIndex + 1 === observationsByCategory.length
+            }"
+          ></ng-container>
+        }
+      </ion-item-group>
+    }
+  </ion-list>
+}

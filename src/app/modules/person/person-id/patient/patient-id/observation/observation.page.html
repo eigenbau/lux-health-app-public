@@ -1,0 +1,79 @@
+<ion-header>
+  @if(patient$ | async; as patient){
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Observations</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+
+      <ion-button
+        class="can-hide show-on-collapse"
+        [appPatientObservationListInput]
+      >
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  } @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+<ion-content #scrollElement fullscreen>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons collapse="true" slot="end">
+        <ion-button [appPatientObservationListInput]>
+          <ion-icon slot="icon-only" name="add"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title size="large">Observations</ion-title>
+    </ion-toolbar>
+    <ion-toolbar>
+      <ion-searchbar showCancelButton="never" #searchbar></ion-searchbar>
+    </ion-toolbar>
+    <ion-toolbar>
+      <app-horizontal-scroll-select
+        [options]="observationCategory$ | async"
+        [labelPath]="['coding', 0, 'display']"
+        #categorySelection
+      ></app-horizontal-scroll-select>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Observations -->
+  @if(observationListOfLatestPerCode$ | async; as observationList){
+  <app-observation-list
+    [listHeader]="false"
+    [observations]="observationList
+    | observationFilter: { searchInput: searchbar.value || '', category: categorySelection.selected }"
+    [loading]="!!(loading$ | async)"
+  >
+    <ng-template #templateHeader>
+      <ion-label>All Observations</ion-label>
+    </ng-template>
+
+    <ng-template
+      #templateListItem
+      let-observation
+      let-lastItemInGroup="lastItemInGroup"
+      let-lastItem="lastItem"
+    >
+      <app-observation-item
+        [observation]="observation"
+        [link]="['code', observation.code.coding[0].code]"
+        [lines]="lastItem ? 'full': lastItemInGroup ? 'none' : 'inset'"
+      ></app-observation-item>
+    </ng-template>
+  </app-observation-list>
+  }
+</ion-content>

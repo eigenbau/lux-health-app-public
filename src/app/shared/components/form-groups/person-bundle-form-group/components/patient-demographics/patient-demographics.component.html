@@ -1,0 +1,20 @@
+<ion-item (click)="birthdate.openDatetime()">
+  <app-datetime-input
+    #birthdate
+    label="Birth Date:"
+    [max]="now"
+    presentation="date"
+    displayFormat="MMM d, y"
+    [datetimeFormControl]="patientFormGroup | formControl: 'birthDate'"
+  ></app-datetime-input>
+</ion-item>
+<ion-item>
+  <app-value-set-select
+    label="Marital status:"
+    justify="space-between"
+    [codeableConceptFormControl]="
+      patientFormGroup | formControl: ['maritalStatus']
+    "
+    [config]="{ source: 'local', valueSet: 'marital-status' }"
+  ></app-value-set-select>
+</ion-item>

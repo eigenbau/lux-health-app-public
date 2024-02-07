@@ -1,0 +1,227 @@
+<ion-header [appStandardHeader]="scrollElement">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      @if(personBundle$ | async; as personBundle){
+      <ion-button [appPersonInput]="personBundle">
+        <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+      </ion-button>
+      }
+    </ion-buttons>
+    <ion-title>{{ (personBundle$ | async)?.person | name }}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar [appShowOnScroll]="scrollElement">
+    <ion-title color="medium" size="small">
+      {{ personRoles$ | async }}
+    </ion-title>
+  </ion-toolbar>
+  @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+
+<ion-content #scrollElement>
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-toolbar>
+    <ion-title color="medium" size="small">
+      {{ personRoles$ | async }}
+    </ion-title>
+  </ion-toolbar>
+  @if(personBundle$ | async; as personBundle){ @if(personBundle.person !== null
+  && personBundle.person; as person){
+  <ion-grid class="action-buttons-grid">
+    <ion-row>
+      <ion-col>
+        <ion-button
+          expand="block"
+          color="light"
+          [href]="buildKeyContactLink('sms', person?.telecom)"
+          [disabled]="!buildKeyContactLink('sms', person?.telecom)"
+        >
+          <ion-icon name="chatbubble" color="primary"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button
+          expand="block"
+          color="light"
+          [href]="buildKeyContactLink('phone', person?.telecom)"
+          [disabled]="!buildKeyContactLink('phone', person?.telecom)"
+        >
+          <ion-icon name="call" color="primary"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button
+          expand="block"
+          color="light"
+          [href]="buildKeyContactLink('email', person?.telecom)"
+          [disabled]="!buildKeyContactLink('email', person?.telecom)"
+        >
+          <ion-icon name="send" color="primary"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button
+          expand="block"
+          color="light"
+          [disabled]="!personBundle?.patient"
+          [routerLink]="['patient', personBundle?.patient?.id]"
+        >
+          <ion-icon
+            name="medical-outline"
+            color="primary"
+            slot="start"
+          ></ion-icon>
+          <ion-label color="primary">Chart</ion-label>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Patient demographics -->
+  @if(personBundle.patient; as patient){
+  <ion-list-header class="inset">
+    <ion-label>Patient demographics</ion-label>
+  </ion-list-header>
+  <ion-list inset="true" lines="inset">
+    <ion-item>
+      <ion-label>Date of birth</ion-label>
+      <ion-note slot="end">
+        {{ patient.birthDate | date: 'd MMM y' }} • {{ patient | age }} yo
+      </ion-note>
+    </ion-item>
+    <ion-item>
+      <ion-label>Marital status</ion-label>
+      <ion-note slot="end">
+        {{ patient?.maritalStatus?.coding?.[0]?.display }}
+      </ion-note>
+    </ion-item>
+  </ion-list>
+  <ion-list inset="true" lines="inset">
+    @for(i of patient.identifier; track $index){
+    <ion-item>
+      <ion-label>{{ i.type?.coding?.[0]?.display }}</ion-label>
+      <ion-note slot="end">{{ i.value }}</ion-note>
+    </ion-item>
+    }
+  </ion-list>
+  }
+
+  <!-- Practitioner demographics -->
+  @if(personBundle.practitioner; as practitioner){ @if(practitioner.identifier
+  && practitioner.identifier.length > 0){
+  <ion-list-header class="inset">
+    <ion-label>Practitioner demographics</ion-label>
+  </ion-list-header>
+  <ion-list inset="true" lines="inset">
+    @for(i of practitioner.identifier; track $index){
+    <ion-item>
+      <ion-label>{{ i.type?.coding?.[0]?.display }}</ion-label>
+      <ion-note slot="end">{{ i.value }}</ion-note>
+    </ion-item>
+    }
+  </ion-list>
+  }}
+
+  <!-- Related patients -->
+  @if(personBundle.relatedPerson && personBundle.relatedPerson.length > 0 &&
+  personBundle.relatedPerson; as relatedPerson){
+  <ion-list-header class="inset">
+    <ion-label>Related Patients</ion-label>
+  </ion-list-header>
+  <ion-list inset="true" lines="inset">
+    @for(r of relatedPerson; track $index){
+    <ion-item
+      [routerLink]="['../','resolve', 'patient', r.patient.reference | id]"
+    >
+      <ion-label color="primary">{{ r.patient.display }}</ion-label>
+      <ion-note slot="end">
+        {{ r.relationship?.[0]?.coding?.[0]?.display }}
+      </ion-note>
+    </ion-item>
+    }
+  </ion-list>
+  }
+
+  <!-- Supporters -->
+  @if((supporters$ | async); as supporters){ @if(supporters.length > 0){
+  <ion-list-header class="inset">
+    <ion-label>Supporters</ion-label>
+  </ion-list-header>
+  <ion-list inset="true" lines="inset">
+    @for(s of supporters; track $index){
+    <ion-item [routerLink]="['../', s.rootPersonResourceId]">
+      <ion-label>
+        {{
+        setTypeToRelatedPerson(s.resource).relationship?.[0]?.coding?.[0]?.display
+        }} of
+      </ion-label>
+      <ion-note color="primary" slot="end">{{ s.resource | name }}</ion-note>
+    </ion-item>
+    }
+  </ion-list>
+  } }
+
+  <!-- Telecom -->
+  @if(person.telecom && person.telecom.length > 0){
+  <ion-list-header class="inset">
+    <ion-label>Telecom</ion-label>
+  </ion-list-header>
+  <ion-list inset="true" lines="inset">
+    @for(t of person.telecom; track $index){
+    <ion-item [href]="buildTelecomLink(t)" detail="false">
+      <ion-icon
+        [name]="telecomIcon(t.system)"
+        slot="start"
+        color="medium"
+        size="small"
+      ></ion-icon>
+      <ion-label>{{ t.use | titlecase }}</ion-label>
+      <ion-note color="primary" slot="end">{{ t.value }}</ion-note>
+    </ion-item>
+    }
+  </ion-list>
+  }
+  <!-- Address -->
+  @if(person.address && person.address.length > 0){
+  <ion-list-header class="inset">
+    <ion-label>Addresses</ion-label>
+  </ion-list-header>
+  <ion-list inset="true" lines="inset">
+    @for(a of person.address; track $index){
+    <ion-item [href]="buildAddressMapLink(a)" detail="false">
+      <ion-icon
+        [name]="addressIcon(a.use)"
+        slot="start"
+        color="medium"
+        size="small"
+      ></ion-icon>
+      <ion-label>{{ a.use | titlecase }}</ion-label>
+      <ion-note class="align-end margin" slot="end">
+        @for(line of formatAddress(a); track $index){
+        <div>{{ line }}</div>
+        }
+      </ion-note>
+    </ion-item>
+    }
+  </ion-list>
+  } } }
+  <!-- Delete -->
+  @if(personBundle$ | async; as personBundle){
+  <div class="center">
+    <ion-icon
+      (click)="presentSelectDeleteActionSheet(personBundle)"
+      color="light"
+      name="trash-outline"
+    ></ion-icon>
+  </div>
+  }
+</ion-content>

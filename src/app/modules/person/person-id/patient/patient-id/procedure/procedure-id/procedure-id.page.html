@@ -1,0 +1,117 @@
+@if(procedure$ | async; as procedure){
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Procedure</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+
+      <ion-button
+        [appPatientProcedureInput]="procedure"
+        class="can-hide show-on-collapse"
+      >
+        <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+<app-scroll-to-top [scrollElement]="content"></app-scroll-to-top>
+
+<ion-content #content fullscreen>
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons collapse="true" slot="end">
+        <ion-button [appPatientProcedureInput]="procedure">
+          <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>Procedure</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-list inset lines="inset">
+    <ion-item>
+      <ion-label>
+        {{ procedure.code?.coding?.[0]?.display | titlecase }}
+      </ion-label>
+      <ion-icon name="bandage-outline" slot="start"></ion-icon>
+    </ion-item>
+  </ion-list>
+
+  <ion-list inset lines="inset">
+    @if(procedure.bodySite){
+    <ion-item>
+      <ion-label>
+        {{ procedure.bodySite[0].coding?.[0]?.display | titlecase }}
+      </ion-label>
+      <ion-icon name="body" slot="start"></ion-icon>
+    </ion-item>
+    } @if(procedure.performedPeriod){
+    <ion-item>
+      <ion-label>
+        {{ procedure.performedPeriod | period: 'distanceToNow' }} • {{
+        procedure.performedPeriod | period: 'date' }}
+      </ion-label>
+      <ion-icon name="calendar-number-outline" slot="start"></ion-icon>
+    </ion-item>
+    } @if(!!+(procedure.performedPeriod | period:'durationInt')){
+    <ion-item>
+      <ion-label>
+        {{ procedure.performedPeriod | period: 'time' }} • {{
+        procedure.performedPeriod | period: 'duration' }}
+      </ion-label>
+      <ion-icon name="timer-outline" slot="start"></ion-icon>
+    </ion-item>
+    }
+
+    <ion-item>
+      <ion-label>
+        {{ procedure.category?.coding?.[0]?.display | titlecase }}
+      </ion-label>
+      <ion-icon name="list-outline" slot="start"></ion-icon>
+    </ion-item>
+
+    @for(note of procedure?.note; track $index){
+    <ion-item [appExpandable] class="margin-fix">
+      <ion-label>{{ note.text }}</ion-label>
+      <ion-icon name="document-text-outline" slot="start"></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+
+  <!-- Related Encounter -->
+  @if(procedure.encounter; as encounterReference){ @if(encounterReference |
+  referencedResource: 'IEncounter' | async; as encouter){
+  <ion-list-header class="inset" lines="none">
+    <ion-label>
+      <ion-icon name="calendar-outline" class="inline-icon"></ion-icon>
+      Related Encounter
+    </ion-label>
+  </ion-list-header>
+  <ion-list inset lines="inset">
+    <app-encounter-item
+      [encounter]="encouter"
+      [link]="[ '../../', 'encounter', encouter.id || '']"
+    ></app-encounter-item>
+  </ion-list>
+  } }
+  <!-- Delete -->
+  <div class="center">
+    <ion-icon
+      (click)="deleteResource(procedure.id)"
+      color="light"
+      name="trash-outline"
+    ></ion-icon>
+  </div>
+</ion-content>
+}

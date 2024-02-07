@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button slot="end" (click)="goalFormGroup.toggleNote()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="document"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      <ion-button (click)="onSubmit()" [disabled]="form.invalid">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Goal</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container [formGroup]="form">
+    <app-patient-goal-form-group
+      #goalFormGroup
+      [patchValue]="goal"
+      lines="inset"
+    ></app-patient-goal-form-group>
+  </ng-container>
+</ion-content>

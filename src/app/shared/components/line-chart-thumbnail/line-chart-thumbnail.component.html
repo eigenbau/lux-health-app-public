@@ -1,0 +1,12 @@
+@if (series$ | async; as series) {
+  @if (chartOptions$ | async; as chartOptions) {
+    <apx-chart
+      [series]="series"
+      [colors]="chartOptions.colors || []"
+      [chart]="chartOptions.chart || { type: 'line' }"
+      [stroke]="chartOptions.stroke || {}"
+      [grid]="chartOptions.grid || {}"
+      [fill]="chartOptions.fill || {}"
+    ></apx-chart>
+  }
+}

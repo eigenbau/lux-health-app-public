@@ -1,0 +1,129 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Schedule</ion-title>
+    <!-- <ion-buttons slot="end">
+      <ion-button class="can-hide show-on-collapse">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons> -->
+  </ion-toolbar>
+  <!-- <ion-toolbar>
+    <ion-searchbar [formControl]="searchInput"></ion-searchbar>
+  </ion-toolbar> -->
+  @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+<ion-content #scrollElement fullscreen>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <!-- <ion-buttons collapse="true" slot="end">
+        <ion-button>
+          <ion-icon slot="icon-only" name="add"></ion-icon>
+        </ion-button>
+      </ion-buttons> -->
+      <ion-title size="large">Schedule</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if(scheduleList$ | async; as scheduleList){
+  <!-- Skeleton list - Start -->
+  @if((loading$ | async) && scheduleList.length === 0){
+  <app-skeleton-list [rows]="15">
+    <ng-template #listItem>
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <h2>
+              <ion-skeleton-text
+                animated
+                style="width: 40%"
+              ></ion-skeleton-text>
+            </h2>
+            <p>
+              <ion-skeleton-text
+                animated
+                style="width: 80%"
+              ></ion-skeleton-text>
+            </p>
+            <p>
+              <ion-skeleton-text
+                animated
+                style="width: 60%"
+              ></ion-skeleton-text>
+            </p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ng-template>
+  </app-skeleton-list>
+  }
+  <!-- Skeleton list - End -->
+
+  <ion-list>
+    @if(scheduleList.length === 0 && (loading$ | async) === false){
+    <ion-item lines="none" class="list-note">
+      <ion-label>No encounters found</ion-label>
+    </ion-item>
+    } @for(s of scheduleList; track trackById; let i = $index){ @if(i === 0 ||
+    (s.period?.start | isSameDay: scheduleList[i-1].period?.start) === false){
+    <ion-item-divider sticky color="light">
+      {{ s.period?.start | date: 'EEEE • d MMM y'}}
+    </ion-item-divider>
+    }
+
+    <ion-item
+      [lines]="
+        i + 1 === scheduleList.length
+        ? 'full'
+        : (s?.period?.start | isSameDay: scheduleList?.[i+1]?.period?.start)
+        ? 'inset'
+        : 'none'"
+    >
+      <ion-label>
+        <h2>{{ s.subject?.display }}</h2>
+        <p>
+          {{ s.class.display | titlecase }}
+          <ion-chip
+            [color]="s.status === 'cancelled' ? 'secondary' : s.status === 'finished' ? 'primary' : ''"
+          >
+            {{ s.status | titlecase }}
+          </ion-chip>
+        </p>
+        <p>
+          {{ s.period | period: 'time' }} • {{ s.period | period: 'duration' }}
+        </p>
+      </ion-label>
+      <ion-icon
+        name="medical-outline"
+        slot="end"
+        color="primary"
+        (click)="goToPatientPage(s.subject?.reference)"
+      ></ion-icon>
+      <ion-icon
+        name="calendar-outline"
+        slot="end"
+        color="primary"
+        (click)="goToPatientPage(s.subject?.reference , 'Encounter' ,s.id)"
+      ></ion-icon>
+    </ion-item>
+    }
+  </ion-list>
+
+  <ion-infinite-scroll class="ion-padding-top">
+    <ion-infinite-scroll-content
+      loadingSpinner="lines"
+    ></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  }
+</ion-content>

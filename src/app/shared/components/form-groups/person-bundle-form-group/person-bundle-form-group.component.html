@@ -1,0 +1,78 @@
+@if (personRoles$ | async; as personRoles) {
+  <div class="chip-container">
+    <div>
+      <ion-chip
+        [ngClass]="{ active: personRoles?.patient }"
+        (click)="setPersonRoles({ patient: !personRoles.patient })"
+        [disabled]="patchValue?.patient"
+      >
+        <ion-label>Patient</ion-label>
+        @if (patchValue?.patient) {
+          <ion-icon name="lock-closed"></ion-icon>
+        }
+      </ion-chip>
+      <ion-chip
+        [ngClass]="{ active: personRoles.relatedPerson }"
+        (click)="setPersonRoles({ relatedPerson: !personRoles.relatedPerson })"
+        [disabled]="patchValue?.relatedPerson"
+      >
+        <ion-label>Supporter</ion-label>
+        @if (patchValue?.relatedPerson) {
+          <ion-icon name="lock-closed"></ion-icon>
+        }
+      </ion-chip>
+      <ion-chip
+        [ngClass]="{ active: personRoles.practitioner }"
+        (click)="setPersonRoles({ practitioner: !personRoles.practitioner })"
+        [disabled]="patchValue?.practitioner"
+      >
+        <ion-label>Practitioner</ion-label>
+        @if (patchValue?.practitioner) {
+          <ion-icon name="lock-closed"></ion-icon>
+        }
+      </ion-chip>
+    </div>
+  </div>
+  <ion-list-header>
+    <ion-label>Demographics</ion-label>
+  </ion-list-header>
+  <ion-list>
+    <app-person-demographics
+      [patchValue]="patchValue?.person"
+      parentFormPath="person"
+      [autofocus]="true"
+    ></app-person-demographics>
+    @if (personRoles.patient) {
+      <app-patient-demographics
+        [patchValue]="patchValue?.patient"
+        parentFormPath="patient"
+      ></app-patient-demographics>
+    }
+  </ion-list>
+  @if (personRoles.patient) {
+    <app-patient-identifier
+      [patchValue]="patchValue?.patient"
+      parentFormPath="patient"
+    ></app-patient-identifier>
+  }
+  @if (personRoles.practitioner) {
+    <app-practitioner-identifier
+      [patchValue]="patchValue?.practitioner"
+      parentFormPath="practitioner"
+    ></app-practitioner-identifier>
+  }
+  @if (personRoles.relatedPerson) {
+    <app-related-person
+      [patchValue]="patchValue?.relatedPerson"
+      [personId]="patchValue?.person?.id || ''"
+    ></app-related-person>
+  }
+  <app-telecom
+    [patchValue]="patchValue?.person"
+    parentFormPath="person"
+  ></app-telecom>
+  <app-address
+    [patchValue]="patchValue?.person"
+    parentFormPath="person"
+  ></app-address>
+}

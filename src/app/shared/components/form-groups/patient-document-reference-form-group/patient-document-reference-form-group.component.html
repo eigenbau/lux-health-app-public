@@ -1,0 +1,95 @@
+<ion-list [lines]="lines">
+  <!-- Type -->
+  <ion-item>
+    <app-value-set-select
+      label="Type:"
+      justify="space-between"
+      [codeableConceptFormControl]="
+        documentReferenceFormGroup | formControl: 'type'
+      "
+      title="Type"
+      [config]="{ valueSet: 'c80-doc-typecodes' }"
+    ></app-value-set-select>
+  </ion-item>
+  <!-- Category -->
+  @if (showCategory$ | async) {
+    <ion-item>
+      <app-value-set-select
+        label="Category:"
+        justify="space-between"
+        [codeableConceptFormControl]="
+          documentReferenceFormGroup | formControl: ['category', '0']
+        "
+        title="Category"
+        [config]="{ valueSet: 'document-classcodes' }"
+      ></app-value-set-select>
+    </ion-item>
+  }
+  <!-- Status -->
+  @if (showStatus$ | async) {
+    <ion-item>
+      <app-value-set-select
+        label="Status:"
+        justify="space-between"
+        [codeFormControl]="documentReferenceFormGroup | formControl: ['status']"
+        title="Status"
+        [config]="{ source: 'local', valueSet: 'document-reference-status' }"
+      ></app-value-set-select>
+    </ion-item>
+  }
+  <!-- Date -->
+  @if ((linkReference$ | async) === false) {
+    <ion-item class="lux-input" (click)="date.openDatetime()">
+      <app-datetime-input
+        #date
+        label="Date & Time:"
+        [max]="now"
+        presentation="date-time"
+        displayFormat="h:mm a • MMM d, y"
+        [datetimeFormControl]="documentReferenceFormGroup | formControl: 'date'"
+      ></app-datetime-input>
+    </ion-item>
+  }
+  <!-- Description -->
+  @if (showDescription$ | async) {
+    <ion-item>
+      <ion-textarea
+        placeholder="Description"
+        aria-label="Description"
+        autoGrow="true"
+        autocapitalize="on"
+        rows="1"
+        [formControl]="documentReferenceFormGroup | formControl: 'description'"
+      ></ion-textarea>
+    </ion-item>
+  }
+</ion-list>
+<ion-item color="primary">
+  <label class="file-upload">
+    <input
+      type="file"
+      [accept]="acceptedFileTypes"
+      (change)="uploadFile($event)"
+      [disabled]="
+        (fileUploaded$ | async) ||
+        this.fh.getControl(documentReferenceFormGroup, 'id').value
+      "
+    />
+    <ion-icon
+      [name]="
+        (fileUploaded$ | async)
+          ? 'checkmark-circle-outline'
+          : this.fh.getControl(documentReferenceFormGroup, 'id').value
+            ? 'lock-closed-outline'
+            : 'search-outline'
+      "
+    ></ion-icon>
+  </label>
+</ion-item>
+@if (fileName$ | async; as fileName) {
+  <ion-item lines="none">
+    <ion-label class="ion-text-center">
+      <p>{{ fileName }}</p>
+    </ion-label>
+  </ion-item>
+}

@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Goals</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+
+      <ion-button [appPatientGoalInput] class="can-hide show-on-collapse">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <!-- <ion-toolbar>
+    <ion-searchbar [formControl]="searchInput"></ion-searchbar>
+  </ion-toolbar> -->
+  @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+<ion-content #scrollElement fullscreen>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons collapse="true" slot="end">
+        <ion-button [appPatientGoalInput]>
+          <ion-icon slot="icon-only" name="add"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title size="large">Goals</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- No goals found -->
+  @if((goalList$ | async)?.length === 0 && (loading$ | async) === false){
+  <ion-list>
+    <ion-item lines="none" class="list-note">
+      <ion-label>No goals found</ion-label>
+    </ion-item>
+  </ion-list>
+  }
+
+  <!-- Goals -->
+  @if(goalList$ | async; as goalList){
+  <ion-list>
+    @for(g of goalList; track trackById; let i = $index){
+    <app-goal-item
+      [goal]="g"
+      [link]="[g.id || '']"
+      [lines]="i + 1 === goalList.length ? 'full' : 'inset'"
+    ></app-goal-item>
+    }
+  </ion-list>
+  }
+</ion-content>

@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSubmit()" [disabled]="this.form.invalid">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    @if((encounterFormGroup.encounter$ | async)?.class?.display; as
+    encounterTitle){
+    <ion-title>{{ encounterTitle | titlecase }}</ion-title>
+    } @if(!(encounterFormGroup.encounter$ | async)?.class?.display){
+    <ion-title>Encounter</ion-title>
+    }
+  </ion-toolbar>
+</ion-header>
+<ion-content #content>
+  <ng-container [formGroup]="form">
+    <!-- Encounter form group - Start -->
+    <app-patient-encounter-form-group
+      #encounterFormGroup
+      [patchValue]="encounter"
+    ></app-patient-encounter-form-group>
+  </ng-container>
+</ion-content>

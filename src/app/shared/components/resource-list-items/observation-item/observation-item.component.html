@@ -1,0 +1,25 @@
+<ion-item detail [lines]="lines" [appExpandable]="trigger" class="resource">
+  <ion-label>
+    <div class="note" [routerLink]="link">
+      {{ observation.effectiveDateTime | distanceToNow }}
+    </div>
+    <h2 #trigger>
+      {{ observation.code.coding?.[0]?.display }}
+      @if (observation.bodySite; as bodySite) {
+        <span>
+          •
+          <ion-icon name="body" class="inline-icon"></ion-icon>
+          {{ bodySite | bodySite }}
+        </span>
+      }
+    </h2>
+    <p>{{ observation | valueX }}</p>
+  </ion-label>
+  <ion-note class="line-chart-thumbnail-container">
+    <app-line-chart-thumbnail
+      [series]="chartSeries"
+      [height]="44"
+      [width]="100"
+    ></app-line-chart-thumbnail>
+  </ion-note>
+</ion-item>

@@ -1,0 +1,120 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Theme Settings</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSubmit()">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content scroll-y="false" [formGroup]="form">
+  <ion-list-header>
+    <ion-label>Dark mode settings</ion-label>
+  </ion-list-header>
+  <ion-list lines="none">
+    <ion-item class="lux-input">
+      <ion-toggle
+        justify="space-between"
+        [formControl]=" form | formControl: 'appDarkMode'"
+        #appDarkMode
+      >
+        Turn dark mode {{ (form | formControl: 'appDarkMode').value ? 'off' :
+        'on' }}
+      </ion-toggle>
+      <ion-icon
+        [name]="(form | formControl: 'appDarkMode').value ? 'sunny' : 'moon'"
+        slot="start"
+        color="primary"
+      ></ion-icon>
+    </ion-item>
+    <ion-item class="lux-input">
+      <ion-toggle
+        justify="space-between"
+        [formControl]="form | formControl: 'appUsesOsDarkMode'"
+      >
+        Use device settings
+      </ion-toggle>
+      <ion-icon name="options" slot="start" color="primary"></ion-icon>
+    </ion-item>
+  </ion-list>
+  <ion-list-header>
+    <ion-label>
+      {{ (darkModeActive$ | async) ? 'Dark' : 'Light' }} key colour
+    </ion-label>
+  </ion-list-header>
+  @for(mode of ['dark', 'light']; track $index){ @if((darkModeActive$ | async)
+  && mode === 'dark' ? true : (darkModeActive$ | async) === false && mode ===
+  'light' ? true : false){
+  <ion-list lines="none">
+    <ion-item class="lux-input">
+      <ion-range
+        aria-label="primary-hue"
+        min="0"
+        max="360"
+        pin
+        color="primary"
+        [formControl]="form | formControl: ['colors', mode, 'primary', 'hue']"
+        (ionChange)="onColorChange($event, ['colors', mode, 'primary', 'hue'])"
+        debounce="10"
+      >
+        <ion-icon slot="start" color="primary" name="color-fill"></ion-icon>
+      </ion-range>
+    </ion-item>
+    <ion-item class="lux-input">
+      <ion-range
+        aria-label="primary-saturation"
+        min="0"
+        max="100"
+        pin
+        color="primary"
+        [formControl]="form | formControl: ['colors', mode, 'primary', 'saturation']"
+        (ionChange)="onColorChange($event, ['colors', mode, 'primary', 'saturation'])"
+        debounce="10"
+      >
+        <ion-icon slot="start" color="primary" name="contrast"></ion-icon>
+      </ion-range>
+    </ion-item>
+    <ion-item class="lux-input">
+      <ion-range
+        aria-label="primary-luminance"
+        min="0"
+        max="100"
+        pin
+        color="primary"
+        [formControl]="form | formControl: ['colors', mode, 'primary', 'luminance']"
+        (ionChange)="onColorChange($event, ['colors', mode, 'primary', 'luminance'])"
+        debounce="10"
+      >
+        <ion-icon slot="start" color="primary" name="sunny"></ion-icon>
+      </ion-range>
+    </ion-item>
+  </ion-list>
+  } }
+  <ion-list-header>
+    <ion-label>Secondary colour hue offset</ion-label>
+  </ion-list-header>
+  <ion-list lines="none">
+    <ion-item class="lux-input">
+      <ion-range
+        aria-label="secondary-hue-offset"
+        min="0"
+        max="360"
+        step="10"
+        pin
+        color="secondary"
+        [formControl]="form | formControl: ['colors', 'secondaryHueOffset']"
+        (ionChange)="onColorChange($event, ['colors', 'secondaryHueOffset'])"
+        debounce="10"
+      >
+        <ion-icon slot="start" color="secondary" name="color-fill"></ion-icon>
+      </ion-range>
+    </ion-item>
+  </ion-list>
+</ion-content>

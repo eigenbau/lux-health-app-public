@@ -1,0 +1,88 @@
+{
+  "resourceType": "ValueSet",
+  "meta": {
+    "lastUpdated": "2021-07-21T10:36:15.732+10:00",
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
+    ]
+  },
+  "url": "http://hl7.org/fhir/ValueSet/goal-achievement",
+  "identifier": [
+    {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:oid:2.16.840.1.113883.4.642.3.1374"
+    }
+  ],
+  "version": "4.0.1",
+  "name": "GoalAchievementStatus",
+  "title": "Goal achievement status",
+  "status": "draft",
+  "experimental": false,
+  "expansion": {
+    "identifier": "388d2acf-f094-4e7b-aaad-13676c02edb8",
+    "timestamp": "2022-03-05T04:29:45+10:00",
+    "total": 9,
+    "offset": 0,
+    "parameter": [
+      {
+        "name": "version",
+        "valueUri": "http://terminology.hl7.org/CodeSystem/goal-achievement|4.0.1"
+      },
+      {
+        "name": "count",
+        "valueInteger": 2147483647
+      },
+      {
+        "name": "offset",
+        "valueInteger": 0
+      }
+    ],
+    "contains": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/goal-achievement",
+        "code": "achieved",
+        "display": "Achieved"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/goal-achievement",
+        "code": "improving",
+        "display": "Improving"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/goal-achievement",
+        "code": "in-progress",
+        "display": "In Progress"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/goal-achievement",
+        "code": "no-change",
+        "display": "No Change"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/goal-achievement",
+        "code": "no-progress",
+        "display": "No Progress"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/goal-achievement",
+        "code": "not-achieved",
+        "display": "Not Achieved"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/goal-achievement",
+        "code": "not-attainable",
+        "display": "Not Attainable"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/goal-achievement",
+        "code": "sustaining",
+        "display": "Sustaining"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/goal-achievement",
+        "code": "worsening",
+        "display": "Worsening"
+      }
+    ]
+  }
+}

@@ -1,0 +1,105 @@
+<ion-list-header>
+  <ion-label>Address</ion-label>
+  <ion-button class="plus" (click)="addressFormArrayHelper.push()">
+    <ion-icon name="add" color="primary" slot="icon-only"></ion-icon>
+  </ion-button>
+</ion-list-header>
+
+@if (addressFormArray.length > 0) {
+  <ion-list [formGroup]="addressFormArray | formGroup">
+    @for (
+      addressItem of addressFormArray.controls;
+      track addressItem;
+      let i = $index
+    ) {
+      <ng-container [formGroupName]="i">
+        <ion-item-sliding>
+          <ion-item>
+            <app-value-set-select
+              ariaLabel="Address use"
+              placeholder="Address use"
+              preferredInputInterface="action-sheet"
+              [codeFormControl]="addressFormArray | formControl: [i, 'use']"
+              [config]="{ source: 'local', valueSet: 'address-use' }"
+            ></app-value-set-select>
+          </ion-item>
+          <ion-item-options
+            side="end"
+            (ionSwipe)="addressFormArrayHelper.removeAt(i)"
+          >
+            <ion-item-option
+              color="primary"
+              (click)="addressFormArrayHelper.removeAt(i)"
+              expandable="true"
+            >
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+
+        <ng-container formArrayName="line">
+          @for (
+            addressLineItem of (addressFormArray | formArray: [i, "line"])
+              .controls;
+            track l;
+            let l = $index
+          ) {
+            <ion-item-sliding #slidingItem>
+              <ion-item lines="none">
+                <ion-input
+                  autocapitalize="words"
+                  [attr.aria-label]="'Address Line' + (l + 1)"
+                  [placeholder]="'Address Line ' + (l + 1)"
+                  [formControlName]="l"
+                  [appLimitInput]="{ type: 'alphanumeric' }"
+                />
+              </ion-item>
+              <ion-item-options side="end">
+                @if (l === 0) {
+                  <ion-item-option (click)="addLine(i); slidingItem.close()">
+                    Add
+                  </ion-item-option>
+                }
+                @if (l === 1) {
+                  <ion-item-option
+                    color="primary"
+                    (click)="deleteLine(i, l); slidingItem.close()"
+                  >
+                    <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                  </ion-item-option>
+                }
+              </ion-item-options>
+            </ion-item-sliding>
+          }
+        </ng-container>
+        <ion-item lines="none">
+          <ion-input
+            autocapitalize="words"
+            aria-label="City"
+            placeholder="City"
+            formControlName="city"
+            [appLimitInput]="{ type: 'alphanumeric' }"
+          />
+        </ion-item>
+        <ion-item lines="none">
+          <ion-input
+            autocapitalize="words"
+            aria-label="Province"
+            placeholder="Province"
+            formControlName="state"
+            [appLimitInput]="{ type: 'alphanumeric' }"
+          />
+        </ion-item>
+        <ion-item>
+          <ion-input
+            autocapitalize="words"
+            aria-label="Postal Code"
+            placeholder="Postal Code"
+            formControlName="postalCode"
+            [appLimitInput]="{ type: 'alphanumeric' }"
+          />
+        </ion-item>
+      </ng-container>
+    }
+  </ion-list>
+}

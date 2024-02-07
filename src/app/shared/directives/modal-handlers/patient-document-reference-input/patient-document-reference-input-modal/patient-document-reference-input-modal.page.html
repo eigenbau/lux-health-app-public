@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      @if(documentReferenceFormGroup.fileName$.value; as v){
+      <ion-button (click)="closeModal(v)">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+      }
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSubmit()" [disabled]="form.invalid">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Document</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      @if(documentReference.context?.related &&
+      documentReference.context?.related?.[0]?.reference){
+      <ion-button (click)="documentReferenceFormGroup.toggleEncounterLink()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          [name]="(documentReferenceFormGroup.linkReference$ | async) ? 'link-outline' : 'unlink-outline'"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      }
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="documentReferenceFormGroup.toggleCategory()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="list"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      <ion-button (click)="documentReferenceFormGroup.toggleStatus()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="help"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      <ion-button (click)="documentReferenceFormGroup.toggleDescription()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="document"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container [formGroup]="form">
+    <app-patient-document-reference-form-group
+      #documentReferenceFormGroup
+      [patchValue]="documentReference"
+      [dateTime]="dateTime"
+      lines="inset"
+    ></app-patient-document-reference-form-group>
+  </ng-container>
+</ion-content>

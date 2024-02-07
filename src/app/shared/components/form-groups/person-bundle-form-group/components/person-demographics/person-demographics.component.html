@@ -1,0 +1,85 @@
+<ng-container [formGroup]="nameFormArray | formGroup: '0'">
+  <ng-container [formGroup]="nameFormArray | formGroup: ['0', 'given']">
+    @for (
+      givenName of (nameFormArray | formArray: ["0", "given"]).controls;
+      track i;
+      let i = $index
+    ) {
+      <ion-item-sliding #slidingItem>
+        <ion-item>
+          <ion-input
+            [formControlName]="i"
+            type="text"
+            placeholder="Given name"
+            arial-label="Given name"
+            autocapitalize="words"
+          />
+        </ion-item>
+
+        <ion-item-options
+          side="end"
+          (ionSwipe)="
+            $first
+              ? givenFormArrayHelper.push()
+              : givenFormArrayHelper.removeAt(i);
+            slidingItem.close()
+          "
+        >
+          @if ($first) {
+            <ion-item-option
+              (click)="givenFormArrayHelper.push(); slidingItem.close()"
+              [disabled]="
+                (nameFormArray | formArray: ['0', 'given']).length ===
+                givenFormArrayHelper.maxLength
+              "
+              expandable
+            >
+              Add
+            </ion-item-option>
+          }
+          @if (i === 1) {
+            <ion-item-option
+              color="primary"
+              (click)="givenFormArrayHelper.removeAt(i); slidingItem.close()"
+              expandable
+            >
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+          }
+        </ion-item-options>
+      </ion-item-sliding>
+    }
+  </ng-container>
+  <ion-item>
+    <ion-input
+      formControlName="family"
+      type="text"
+      placeholder="Last name"
+      aria-label="Last name"
+      autocapitalize="words"
+      [appLimitInput]="{ type: 'letters' }"
+    />
+  </ion-item>
+  <ion-item>
+    <ion-select
+      label="Prefix:"
+      [formControl]="nameFormArray | formControl: ['0', 'prefix', '0']"
+      interface="action-sheet"
+    >
+      @for (prefix of prefixes; track $index) {
+        <ion-select-option [value]="prefix">
+          {{ prefix }}
+        </ion-select-option>
+      }
+    </ion-select>
+  </ion-item>
+</ng-container>
+<ion-item>
+  <app-value-set-select
+    interface="action-sheet"
+    label="Gender:"
+    justify="space-between"
+    [codeFormControl]="genderFormControl"
+    [config]="{ source: 'local', valueSet: 'administrative-gender' }"
+  ></app-value-set-select>
+</ion-item>

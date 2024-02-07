@@ -1,0 +1,24 @@
+<ion-item
+  detail
+  [lines]="lines"
+  [appExpandable]="trigger"
+  [class]="'resource ' + classesString"
+>
+  <ion-label>
+    <div class="note" [routerLink]="link">Details</div>
+    <h2 #trigger>
+      {{ condition.code?.coding?.[0]?.display }}
+    </h2>
+    @if (condition.note) {
+      <p>{{ condition.note[0].text }}</p>
+    }
+    @if (
+      condition.clinicalStatus?.coding && condition.verificationStatus?.coding
+    ) {
+      <p>
+        {{ condition.clinicalStatus?.coding?.[0]?.display }} •
+        {{ condition.verificationStatus?.coding?.[0]?.display }}
+      </p>
+    }
+  </ion-label>
+</ion-item>

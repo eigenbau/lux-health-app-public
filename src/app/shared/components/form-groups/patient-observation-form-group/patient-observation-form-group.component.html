@@ -1,0 +1,98 @@
+<ion-list [lines]="lines">
+  <!-- value - Start -->
+  <app-value-x-form-group
+    [parentFormPath]="parentFormPath"
+    [patchValue]="patchValue"
+    [lines]="lines"
+  ></app-value-x-form-group>
+  <!-- value - End -->
+  <!-- Component - Start -->
+  <ng-container [formGroup]="componentFormArray | formGroup">
+    @for (
+      component of componentFormArray.controls;
+      track component;
+      let i = $index
+    ) {
+      @if (patchValue?.component?.[i]; as p) {
+        <app-value-x-form-group
+          [patchValue]="p"
+          [parentFormPath]="[i]"
+          [isComponent]="true"
+          [parentCodeDisplay]="patchValue?.code?.coding?.[0]?.display"
+          [lines]="lines"
+        ></app-value-x-form-group>
+      }
+    }
+  </ng-container>
+  <!-- Component - End -->
+  <!-- BodySite - Start -->
+  @if (patchValue?.["bodySite"]) {
+    <ion-item>
+      <!-- Laterality -->
+      @if (bodySiteOption === "laterality") {
+        <ion-select
+          label="Laterality:"
+          justify="space-between"
+          [compareWith]="fh.ionSelectCompareWithCodeableConceptMultiple"
+          [formControl]="bodySiteFormControl"
+          interface="action-sheet"
+        >
+          @for (codeableConcept of bodySite; track codeableConcept) {
+            <ion-select-option [value]="codeableConcept">
+              {{
+                codeableConcept.coding?.[0]?.display
+                  | abreviateByListCompare: bodySiteDisplay
+              }}
+            </ion-select-option>
+          }
+        </ion-select>
+      }
+      <!-- Free -->
+      @if (bodySiteOption === "free") {
+        <app-value-set-select
+          label="Body site:"
+          justify="space-between"
+          [codeableConceptFormControl]="bodySiteFormControl"
+          title="Body sites"
+          [config]="{
+            ecl: '<< 442083009 | Anatomical or acquired body structure (body structure) |'
+          }"
+        ></app-value-set-select>
+      }
+    </ion-item>
+  }
+  <!-- BodySite - End -->
+  <!-- EffectiveDateTime - Start -->
+  @if ((syncDateTimeWithParent$ | async) === false) {
+    <ion-item class="lux-input" (click)="effectiveDateTime.openDatetime()">
+      <app-datetime-input
+        #effectiveDateTime
+        label="Date & Time:"
+        [max]="now"
+        presentation="date-time"
+        displayFormat="h:mm a • MMM d, y"
+        [minuteValues]="minValues"
+        [datetimeFormControl]="
+          observationFormGroup | formControl: ['effectiveDateTime']
+        "
+      ></app-datetime-input>
+    </ion-item>
+  }
+  <!-- EffectiveDateTime - End -->
+  <!-- Note - Start -->
+  <ng-container [formGroup]="noteFormArray | formGroup">
+    @for (note of noteFormArray.controls; track note; let i = $index) {
+      <ion-item>
+        <ion-textarea
+          placeholder="Note"
+          aria-label="Note"
+          autoGrow="true"
+          autocapitalize="on"
+          rows="1"
+          [formControl]="noteFormArray | formControl: [i, 'text']"
+        ></ion-textarea>
+      </ion-item>
+    }
+  </ng-container>
+  <!-- Note - End -->
+</ion-list>

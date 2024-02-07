@@ -1,0 +1,95 @@
+<ion-list>
+  <!-- Code and value - Start -->
+  <ion-item-group>
+    <app-template-code-and-value-form-group
+      [parentFormPath]="parentFormPath"
+      [patchValue]="patchValue"
+      (addComponentClick)="componentFormArrayHelper.push()"
+    ></app-template-code-and-value-form-group>
+  </ion-item-group>
+  <!-- Code and value - End -->
+  <!-- Component - Start -->
+  <ng-container [formGroup]="componentFormArray | formGroup">
+    @for (
+      component of componentFormArray.controls;
+      track component;
+      let i = $index
+    ) {
+      <ion-item-group>
+        <ion-item-divider sticky color="light">
+          <ion-label>Component {{ i + 1 }}</ion-label>
+        </ion-item-divider>
+        <app-template-code-and-value-form-group
+          [patchValue]="patchValue?.component?.[i] ?? undefined"
+          [parentFormPath]="[i]"
+          [isComponent]="true"
+          (removeComponentClick)="componentFormArrayHelper.removeAt(i)"
+        ></app-template-code-and-value-form-group>
+      </ion-item-group>
+    }
+  </ng-container>
+  <!-- Component - End -->
+  <!-- BodySite - Start -->
+  <ion-item-group>
+    <ion-item-divider sticky color="light">
+      <ion-label>Settings</ion-label>
+    </ion-item-divider>
+    @if (showBodySite$ | async) {
+      <ion-item>
+        <ion-select
+          label="Body site options:"
+          justify="space-between"
+          interface="action-sheet"
+          [compareWith]="fh.ionSelectCompareWithCodeableConceptMultiple"
+          [selectedText]="
+            bodySiteFormControl.value?.coding &&
+            bodySiteFormControl.value?.coding[0].display
+              ? 'Laterality'
+              : 'Free selection'
+          "
+          [formControl]="bodySiteFormControl"
+        >
+          @for (option of bodySiteOptions; track option) {
+            <ion-select-option [value]="option">
+              {{
+                option?.coding && option.coding?.[0]?.display
+                  ? "Laterality"
+                  : "Free selection"
+              }}
+            </ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+    }
+    <!-- BodySite - End -->
+    <!-- Category - Start -->
+    <ion-item>
+      <app-value-set-select
+        label="Category:"
+        justify="space-between"
+        interface="action-sheet"
+        [codeableConceptFormControl]="
+          observationTemplateFormGroup | formControl: ['category', 0]
+        "
+        [config]="{ source: 'local', valueSet: 'observation-category' }"
+      ></app-value-set-select>
+    </ion-item>
+    <!-- Category - End -->
+    <!-- Note - Start -->
+    <ng-container [formGroup]="noteFormArray | formGroup">
+      @for (note of noteFormArray.controls; track note; let i = $index) {
+        <ion-item>
+          <ion-textarea
+            placeholder="Note"
+            aria-label="Note"
+            autoGrow="true"
+            autocapitalize="on"
+            rows="1"
+            [formControl]="noteFormArray | formControl: [i, 'text']"
+          ></ion-textarea>
+        </ion-item>
+      }
+    </ng-container>
+    <!-- Note - End -->
+  </ion-item-group>
+</ion-list>

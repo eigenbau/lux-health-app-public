@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Care plans</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+      <ion-button [appPatientCarePlanInput] class="can-hide show-on-collapse">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <!-- <ion-toolbar>
+    <ion-searchbar [formControl]="searchInput"></ion-searchbar>
+  </ion-toolbar> -->
+
+  @if(loading$ | async){
+
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+<ion-content #scrollElement fullscreen>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons collapse="true" slot="end">
+        <ion-button [appPatientCarePlanInput]>
+          <ion-icon slot="icon-only" name="add"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title size="large">Care plans</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- No care plans found -->
+  @if((carePlanList$ | async)?.length === 0 && (loading$ | async) === false){
+  <ion-list>
+    <ion-item lines="none" class="list-note">
+      <ion-label>No care plans found</ion-label>
+    </ion-item>
+  </ion-list>
+  }
+  <!-- Care plans -->
+  @if(carePlanList$ | async; as carePlanList){
+
+  <ion-list>
+    @for(c of carePlanList; track trackById; let i = $index){
+    <app-care-plan-item
+      [carePlan]="c"
+      [link]="[c.id || '']"
+      [lines]="i + 1 === carePlanList.length ? 'none' : 'inset'"
+    ></app-care-plan-item>
+    }
+  </ion-list>
+  }
+</ion-content>

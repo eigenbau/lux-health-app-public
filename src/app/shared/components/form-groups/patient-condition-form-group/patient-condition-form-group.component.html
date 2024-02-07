@@ -1,0 +1,104 @@
+<ion-list [lines]="lines">
+  <!-- Code - Start -->
+  <ion-item>
+    <app-value-set-select
+      label="Condition:"
+      justify="space-between"
+      [codeableConceptFormControl]="conditionFormGroup | formControl: 'code'"
+      title="Condition"
+      [config]="{
+        ecl: '< 404684003 | Clinical finding |',
+        valueSetCustomName: 'condition'
+      }"
+    ></app-value-set-select>
+  </ion-item>
+  <!-- Code - End -->
+  <!-- BodySite - Start -->
+  <ng-container [formGroup]="bodySiteFormArray | formGroup">
+    @for (note of bodySiteFormArray.controls; track note; let i = $index) {
+      <ion-item class="lux-input">
+        <app-value-set-select
+          label="Body site:"
+          justify="space-between"
+          [codeableConceptFormControl]="bodySiteFormArray | formControl: [i]"
+          title="Body sites"
+          [config]="{
+            ecl: '<< 442083009 | Anatomical or acquired body structure (body structure) |'
+          }"
+        ></app-value-set-select>
+      </ion-item>
+    }
+  </ng-container>
+  <!-- BodySite - End -->
+  <!-- ClinicalStatus - Start -->
+  <ion-item>
+    <app-value-set-select
+      label="Clinical status:"
+      justify="space-between"
+      [codeableConceptFormControl]="
+        conditionFormGroup | formControl: 'clinicalStatus'
+      "
+      preferredInputInterface="action-sheet"
+      [config]="{ source: 'local', valueSet: 'condition-clinical' }"
+    ></app-value-set-select>
+  </ion-item>
+  <!-- ClinicalStatus - End -->
+  <!-- VerificationStatus - Start -->
+  <ion-item>
+    <app-value-set-select
+      label="Verification status:"
+      justify="space-between"
+      [codeableConceptFormControl]="
+        conditionFormGroup | formControl: 'verificationStatus'
+      "
+      preferredInputInterface="action-sheet"
+      [config]="{ source: 'local', valueSet: 'condition-ver-status' }"
+    ></app-value-set-select>
+  </ion-item>
+  <!-- VerificationStatus - End -->
+  <!-- OnsetDateTime - Start -->
+  @if (showOnsetDateTime$ | async) {
+    <ion-item class="lux-input" (click)="onsetDateTime.openDatetime()">
+      <app-datetime-input
+        #onsetDateTime
+        label="Onset:"
+        [max]="now"
+        presentation="date"
+        displayFormat="MMM d, y"
+        [datetimeFormControl]="onsetDateTimeFormControl"
+      ></app-datetime-input>
+    </ion-item>
+  }
+  <!-- OnsetDateTime - End -->
+  <!-- AbatementDateTime - Start -->
+  @if (showAbatementDateTime$ | async) {
+    <ion-item class="lux-input" (click)="abatermentDateTime.openDatetime()">
+      <app-datetime-input
+        #abatermentDateTime
+        label="Abatement:"
+        [min]="onsetDateTimeFormControl.value"
+        [max]="now"
+        presentation="date"
+        displayFormat="MMM d, y"
+        [datetimeFormControl]="abatementDateTimeFormControl"
+      ></app-datetime-input>
+    </ion-item>
+  }
+  <!-- AbatementDateTime - End -->
+  <!-- Note - Start -->
+  <ng-container [formGroup]="noteFormArray | formGroup">
+    @for (note of noteFormArray.controls; track note; let i = $index) {
+      <ion-item>
+        <ion-textarea
+          placeholder="Note"
+          aria-label="Note"
+          autoGrow="true"
+          autocapitalize="on"
+          rows="1"
+          [formControl]="noteFormArray | formControl: [i, 'text']"
+        ></ion-textarea>
+      </ion-item>
+    }
+  </ng-container>
+  <!-- Note - End -->
+</ion-list>

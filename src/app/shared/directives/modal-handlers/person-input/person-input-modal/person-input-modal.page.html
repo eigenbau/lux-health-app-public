@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button
+        (click)="onSubmit()"
+        [disabled]="
+      form.invalid ||
+      (!(personBundleFormGroup.personRoles$ | async)?.patient &&
+      !(personBundleFormGroup.personRoles$ | async)?.relatedPerson &&
+      !(personBundleFormGroup.personRoles$ | async)?.practitioner)
+      "
+      >
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    @if(person$ | async | name; as name){
+    <ion-title>{{ name }}</ion-title>
+    } @if(!(person$ | async | name) && !personBundle){
+    <ion-title>Add New Person</ion-title>
+    }
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <!-- FormGroup -->
+  <ng-container [formGroup]="form">
+    <app-person-bundle-form-group
+      #personBundleFormGroup
+      [patchValue]="personBundle"
+      [initialPersonRoles]="initialPersonRoles"
+    ></app-person-bundle-form-group>
+  </ng-container>
+</ion-content>

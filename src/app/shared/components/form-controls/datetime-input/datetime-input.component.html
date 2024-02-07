@@ -1,0 +1,8 @@
+<ion-input
+  [label]="label"
+  [attr.aria-label]="ariaLabel"
+  [labelPlacement]="labelPlacement"
+  [class.readonly]="readonly"
+  [value]="datetime$ | async | date: displayFormat"
+  [class]="inputClass"
+/>

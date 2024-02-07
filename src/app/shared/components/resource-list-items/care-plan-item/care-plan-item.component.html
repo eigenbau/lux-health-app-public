@@ -1,0 +1,16 @@
+<ion-item detail [lines]="lines" [appExpandable]="trigger" class="resource">
+  <ion-label>
+    <div class="note" [routerLink]="link">Details</div>
+    <h2 #trigger>
+      {{ carePlan | carePlanTitle }}
+    </h2>
+    <p>
+      {{ carePlan.status | titlecase }}
+      @if (carePlan.period?.end) {
+        •
+        <ion-icon name="flag" class="inline-icon"></ion-icon>
+        {{ carePlan.period?.end | distanceToNow }}
+      }
+    </p>
+  </ion-label>
+</ion-item>

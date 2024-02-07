@@ -1,0 +1,83 @@
+<ion-list-header>
+  <ion-label>Telecom</ion-label>
+  <ion-button class="plus" (click)="telecomFormArrayHelper.push()">
+    <ion-icon name="add" color="primary" slot="icon-only"></ion-icon>
+  </ion-button>
+</ion-list-header>
+
+@if (telecomFormArray.length > 0) {
+  <ion-list [formGroup]="telecomFormArray | formGroup">
+    @for (
+      telecomFormItem of telecomFormArray.controls;
+      track telecomFormItem;
+      let i = $index
+    ) {
+      <ion-item-sliding [formGroupName]="i" #telecomSlidingItem>
+        <ion-item>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="2">
+                <app-value-set-select
+                  justify="start"
+                  placeholder="Type"
+                  ariaLabel="Type"
+                  interface="action-sheet"
+                  [codeFormControl]="
+                    telecomFormArray | formControl: [i, 'system']
+                  "
+                  [config]="{
+                    source: 'local',
+                    valueSet: 'contact-point-system'
+                  }"
+                ></app-value-set-select>
+              </ion-col>
+              <ion-col size="2">
+                <app-value-set-select
+                  justify="start"
+                  placeholder="Use"
+                  ariaLabel="Use"
+                  interface="action-sheet"
+                  [codeFormControl]="telecomFormArray | formControl: [i, 'use']"
+                  [config]="{ source: 'local', valueSet: 'contact-point-use' }"
+                ></app-value-set-select>
+              </ion-col>
+              <ion-col size="8">
+                @if (
+                  (telecomFormArray | formControl: [i, "system"]).value;
+                  as value
+                ) {
+                  <ion-input
+                    class="ion-text-end"
+                    [inputmode]="inputMode(value)"
+                    formControlName="value"
+                    [appLimitInput]="{ type: inputMode(value) }"
+                    placeholder="Value"
+                    aria-label="Value"
+                  />
+                }
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+
+        <ion-item-options
+          side="end"
+          (ionSwipe)="
+            telecomFormArrayHelper.removeAt(i); telecomSlidingItem.closeOpened()
+          "
+        >
+          <ion-item-option
+            color="primary"
+            (click)="
+              telecomFormArrayHelper.removeAt(i);
+              telecomSlidingItem.closeOpened()
+            "
+            expandable
+          >
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    }
+  </ion-list>
+}

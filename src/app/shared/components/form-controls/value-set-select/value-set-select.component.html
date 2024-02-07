@@ -1,0 +1,53 @@
+@if (valueSet$ | async; as valueSet) {
+  @if (interface$ | async; as interface) {
+    <!-- Interface: 'search' option -->
+    @if (interface === "search") {
+      <ion-select
+        (click)="openModal($event)"
+        [class]="ionSelectClass"
+        readonly
+        [label]="label"
+        [attr.aria-label]="ariaLabel"
+        [labelPlacement]="labelPlacement"
+        [justify]="justify"
+        [slot]="ionSlot"
+        [placeholder]="placeholder"
+        [selectedText]="selectedText$ | async"
+      ></ion-select>
+    } @else {
+      <!-- Interface: not 'search' option -->
+      <ion-select
+        [class]="ionSelectClass"
+        [label]="label"
+        [attr.aria-label]="ariaLabel"
+        [labelPlacement]="labelPlacement"
+        [justify]="justify"
+        [slot]="ionSlot"
+        [placeholder]="placeholder"
+        [interface]="interface"
+        [formControl]="formControl"
+        [compareWith]="
+          formControlType === 'codeable-concept'
+            ? fh.ionSelectCompareWithCodeableConceptMultiple
+            : formControlType === 'coding'
+              ? fh.ionSelectCompareWithCoding
+              : null
+        "
+      >
+        @for (coding of valueSet; track coding.code) {
+          <ion-select-option
+            [value]="
+              formControlType === 'codeable-concept'
+                ? { coding: [coding] }
+                : formControlType === 'code'
+                  ? coding.code
+                  : coding
+            "
+          >
+            {{ coding.display | titlecase }}
+          </ion-select-option>
+        }
+      </ion-select>
+    }
+  }
+}

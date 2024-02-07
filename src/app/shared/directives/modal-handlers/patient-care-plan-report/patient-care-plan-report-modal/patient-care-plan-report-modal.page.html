@@ -1,0 +1,24 @@
+<ion-content class="ion-padding-top">
+  <ion-list inset="true">
+    <ng-container [formGroup]="form">
+      <ion-item>
+        <ion-textarea
+          placeholder="Body"
+          autoGrow="true"
+          autocapitalize="on"
+          spellcheck="true"
+          rows="1"
+          [formControl]="form | formControl: ['body']"
+          style="max-height: 260px"
+        ></ion-textarea>
+      </ion-item>
+    </ng-container>
+    <!-- Note - End -->
+  </ion-list>
+  <!-- Download PDF -->
+  <ion-list inset>
+    <ion-button expand="block" color="primary" (click)="dowloadPdf()">
+      <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+    </ion-button>
+  </ion-list>
+</ion-content>

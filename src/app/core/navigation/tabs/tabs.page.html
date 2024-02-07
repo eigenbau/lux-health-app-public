@@ -1,0 +1,24 @@
+<ion-tabs #tabs (ionTabsDidChange)="setSelectedTab()">
+  <ion-tab-bar slot="bottom" [color]="isProduction ? '' : 'primary'">
+    <div class="spacer">
+      <ion-menu-button [ngStyle]="{'color': isProduction ? '' : 'white'}">
+        <ion-icon name="ellipsis-vertical"></ion-icon>
+      </ion-menu-button>
+    </div>
+    <ion-tab-button
+      [tab]="selectedTab === 'person' ? 'person/directory/patient' : 'person'"
+    >
+      <ion-icon
+        [name]="selectedTab === 'person'? 'people' : 'people-outline'"
+      ></ion-icon>
+    </ion-tab-button>
+
+    <ion-tab-button tab="schedule">
+      <!-- <ion-badge color="primary">5</ion-badge> -->
+      <ion-icon
+        [name]="selectedTab === 'schedule'? 'calendar' : 'calendar-outline'"
+      ></ion-icon>
+    </ion-tab-button>
+    <div class="spacer"></div>
+  </ion-tab-bar>
+</ion-tabs>

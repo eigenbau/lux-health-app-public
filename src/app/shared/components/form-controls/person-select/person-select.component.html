@@ -1,0 +1,11 @@
+<ion-select
+  (click)="openModal($event)"
+  [label]="label"
+  [attr.aria-label]="ariaLabel"
+  [labelPlacement]="labelPlacement"
+  [class]="ionSelectClass"
+  [placeholder]="placeholder"
+  [selectedText]="selectedText$ | async"
+  [slot]="ionSlot"
+  [justify]="justify"
+></ion-select>

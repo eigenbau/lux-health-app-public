@@ -1,0 +1,85 @@
+<ion-content [scrollY]="false">
+  @if(personBundle$ | async; as personBundle){ @if(personBundle.person !== null
+  && personBundle.person; as person){
+  <ion-grid class="action-buttons-grid">
+    <ion-row>
+      <ion-col class="ion-text-center ion-padding">
+        <app-avatar
+          [name]="person | name"
+          size="60px"
+          (click)="onGoToPersonDetails(person.id)"
+        ></app-avatar>
+        <ion-item [appExpandable]>
+          <ion-label>
+            <h2>
+              {{ person | name }} @if(personBundle?.patient?.birthDate &&
+              personBundle.patient){
+              <span>• {{ personBundle.patient | age }} yo</span>
+              } •
+              <ion-icon
+                class="inline-icon"
+                [name]="person | genderIcon"
+              ></ion-icon>
+            </h2>
+            <p>{{ patientConditions$ | async }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button
+          expand="block"
+          color="light"
+          [href]="buildKeyContactLink('sms', person.telecom)"
+          [disabled]="!buildKeyContactLink('sms', person.telecom)"
+        >
+          <ion-icon name="chatbubble" color="primary"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button
+          expand="block"
+          color="light"
+          [href]="buildKeyContactLink('phone', person.telecom)"
+          [disabled]="!buildKeyContactLink('phone', person.telecom)"
+        >
+          <ion-icon name="call" color="primary"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button
+          expand="block"
+          color="light"
+          [href]="buildKeyContactLink('email', person?.telecom)"
+          [disabled]="!buildKeyContactLink('email', person?.telecom)"
+        >
+          <ion-icon name="send" color="primary"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button
+          expand="block"
+          color="light"
+          [disabled]="!personBundle?.patient"
+          (click)="
+                    onGoToChart(
+                      personBundle.person.id,
+                      personBundle?.patient?.id
+                    )
+                  "
+        >
+          <ion-icon
+            name="medical-outline"
+            color="primary"
+            slot="start"
+          ></ion-icon>
+          <ion-label color="primary">Chart</ion-label>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  } }
+</ion-content>

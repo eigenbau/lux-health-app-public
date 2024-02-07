@@ -1,0 +1,305 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Chart</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <ion-button (click)="onPatientEverythingCopy()">
+        <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
+      </ion-button>
+      <app-chart-menu-button></app-chart-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+  @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button>
+    <ion-icon name="add-outline"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-list side="top">
+    <ion-fab-button [appPatientConditionInput]>
+      <ion-icon name="fitness-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button [appPatientGoalInput]>
+      <ion-icon name="ribbon-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button [appPatientCarePlanInput]>
+      <ion-icon name="compass-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button [appPatientEncounterInput]>
+      <ion-icon name="calendar-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button [appPatientProcedureInput]>
+      <ion-icon name="medkit-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button [appPatientDocumentReferenceInput]>
+      <ion-icon name="attach-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button [appPatientObservationListInput]>
+      <ion-icon name="pulse-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab-list>
+</ion-fab>
+
+<ion-content #scrollElement fullscreen>
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">
+        Chart
+        <!-- <ion-icon
+          name="copy-outline"
+          class="inline-icon"
+          color="medium"
+          size="small"
+          (click)="onPatientEverythingCopy()"
+        ></ion-icon> -->
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- No chart notes -->
+  @if((noChartEntries$ | async) === true && (loading$ | async) === false){
+  <ion-list>
+    <ion-item lines="none" class="list-note">
+      <ion-label>No chart entries found</ion-label>
+    </ion-item>
+  </ion-list>
+  }
+  <!-- Conditions - start -->
+  @if(conditionsWithoutCurrentGoals$ | async; as conditionsWithoutCurrentGoals){
+  @if( conditionsWithCurrentGoals$ |async; as conditionsWithCurrentGoals ){
+  @if(conditionsWithoutCurrentGoals.length > 0 ||
+  conditionsWithCurrentGoals.length > 0){
+  <ion-list-header class="inset">
+    <ion-label>
+      <ion-icon name="fitness-outline" class="inline-icon"></ion-icon>
+      Conditions
+    </ion-label>
+    <!-- <ion-button [appPatientConditionInput]>
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button> -->
+  </ion-list-header>
+  <ion-list inset lines="inset">
+    @for(c of conditionsWithoutCurrentGoals; track trackById; let i = $index){
+    <app-condition-item
+      [condition]="c"
+      [lines]="i + 1 === conditionsWithoutCurrentGoals.length ? 'none' : 'inset'"
+      [link]="['condition', c.id || '']"
+      [classes]="['single-line']"
+    ></app-condition-item>
+    } @if(conditionsWithCurrentGoals.length > 0){
+    <ion-item-divider color="light">Actively managed</ion-item-divider>
+    } @for(c of conditionsWithCurrentGoals; track trackById){
+    <app-condition-item
+      [condition]="c"
+      lines="inset"
+      [link]="['condition', c.id || '']"
+    ></app-condition-item>
+    } @if(conditionsWithoutCurrentGoals.length +
+    conditionsWithCurrentGoals.length < ((conditionsTotal$ | async) || 0)){
+    <ion-item routerLink="condition" detail="false" class="list-end-note">
+      <ion-label color="primary">
+        <p>see all</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  }}}
+  <!-- Goals - start -->
+  @if(goalsRecent$ | async; as goalsRecent){ @if(goalsRecent.length > 0){
+  <ion-list-header class="inset">
+    <ion-label>
+      <ion-icon name="ribbon-outline" class="inline-icon"></ion-icon>
+      Goals
+    </ion-label>
+    <!-- <ion-button [appPatientGoalInput]>
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button> -->
+  </ion-list-header>
+  <ion-list inset lines="inset">
+    @for(g of goalsRecent; track trackById){
+    <app-goal-item
+      [goal]="g"
+      [link]="['goal', g.id || '']"
+      lines="inset"
+    ></app-goal-item>
+    } @if(goalsRecent.length < ((goalsTotal$ | async) || 0)){
+    <ion-item routerLink="goal" detail="false" class="list-end-note">
+      <ion-label color="primary">
+        <p>see all</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  }}
+  <!-- CarePlans - start -->
+  @if(carePlansRecent$ | async; as carePlansRecent){ @if(carePlansRecent.length
+  > 0) {
+  <ion-list-header class="inset">
+    <ion-label>
+      <ion-icon name="compass-outline" class="inline-icon"></ion-icon>
+      Care plans
+    </ion-label>
+    <!-- <ion-button [appPatientCarePlanInput]>
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button> -->
+  </ion-list-header>
+  <ion-list inset lines="inset">
+    @for(c of carePlansRecent; track trackById){
+    <app-care-plan-item
+      [carePlan]="c"
+      [link]="['care-plan', c.id || '']"
+      lines="inset"
+    ></app-care-plan-item>
+    } @if(carePlansRecent.length < ((carePlansTotal$ | async) || 0)){
+    <ion-item routerLink="care-plan" detail="false" class="list-end-note">
+      <ion-label color="primary">
+        <p>see all</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  }}
+  <!-- Encounters - start -->
+  @if(encountersRecent$ | async; as encountersRecent){
+  @if(encountersRecent.length > 0){
+  <ion-list-header class="inset">
+    <ion-label>
+      <ion-icon name="calendar-outline" class="inline-icon"></ion-icon>
+      Encounters
+    </ion-label>
+    <!-- <ion-button [appPatientEncounterInput]>
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button> -->
+  </ion-list-header>
+  <ion-list inset lines="inset">
+    @for(e of encountersRecent$ | async; track trackById){
+    <app-encounter-item
+      [encounter]="e"
+      [link]="['encounter', e.id || '']"
+      lines="inset"
+    ></app-encounter-item>
+    } @if(encountersRecent.length < ((encountersTotal$ | async) || 0)){
+    <ion-item routerLink="encounter" detail="false" class="list-end-note">
+      <ion-label color="primary">
+        <p>see all</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  }}
+  <!-- Procedures - start -->
+  @if(encounterProcedures$ | async; as encounterProcedures){
+  @if(historicalProcedures$ | async; as historicalProcedures){
+  @if(encounterProcedures.length > 0 || historicalProcedures.length > 0){
+  <ion-list-header class="inset">
+    <ion-label>
+      <ion-icon name="medkit-outline" class="inline-icon"></ion-icon>
+      Procedures
+    </ion-label>
+    <!-- <ion-button [appPatientProcedureInput]>
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button> -->
+  </ion-list-header>
+  <ion-list inset lines="inset">
+    @if(historicalProcedures.length > 0){
+    <ion-item-divider color="light">Historical Procedures</ion-item-divider>
+    } @for(p of historicalProcedures; track trackById; let i = $index){
+    <app-procedure-item
+      [procedure]="p"
+      [lines]="i + 1 === historicalProcedures.length ? 'none' : 'inset'"
+      [link]="['procedure', p.id || '']"
+    ></app-procedure-item>
+    } @if(encounterProcedures.length > 0){
+    <ion-item-divider color="light">Encounter Procedures</ion-item-divider>
+    } @for(p of encounterProcedures; track trackById; let i = $index){
+    <app-procedure-item
+      [procedure]="p"
+      lines="inset"
+      [link]="['procedure', p.id || '']"
+    ></app-procedure-item>
+    } @if(encounterProcedures.length + historicalProcedures.length <
+    ((proceduresTotal$ | async) || 0 )){
+    <ion-item routerLink="procedure" detail="false" class="list-end-note">
+      <ion-label color="primary">
+        <p>see all</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  }}}
+  <!-- Documents - start -->
+  @if(documentsRecent$ | async; as documentsRecent){ @if(documentsRecent.length
+  > 0){
+  <ion-list-header class="inset">
+    <ion-label>
+      <ion-icon name="attach-outline" class="inline-icon"></ion-icon>
+      Documents
+    </ion-label>
+    <!-- <ion-button [appPatientDocumentReferenceInput]>
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button> -->
+  </ion-list-header>
+  <ion-list inset lines="inset">
+    @for(d of documentsRecent$ | async; track trackById){
+    <app-document-reference-item
+      [link]="['document-reference', d.id || '']"
+      [documentReference]="d"
+      lines="inset"
+    ></app-document-reference-item>
+    } @if(documentsRecent.length < ((documentsTotal$ | async) || 0)){
+    <ion-item
+      routerLink="document-reference"
+      detail="false"
+      class="list-end-note"
+    >
+      <ion-label color="primary">
+        <p>see all</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  }}
+
+  <!-- Observations - Start -->
+  @if(observationsRecent$ | async; as observationsRecent){
+  @if(observationsRecent.length > 0){
+  <ion-list-header class="inset">
+    <ion-label>
+      <ion-icon name="pulse-outline" class="inline-icon"></ion-icon>
+      Observations
+    </ion-label>
+    <!-- <ion-button [appPatientObservationListInput]>
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button> -->
+  </ion-list-header>
+  <ion-list inset lines="inset">
+    @for(o of observationsRecent$ | async; track trackByCode){
+    @if(o.observations && o.observations[0]){
+    <app-observation-item
+      [observation]="o.observations[0]"
+      [chartSeries]="o.values"
+      [link]="['observation', 'code', o.code?.coding?.[0]?.code || '']"
+      lines="inset"
+    ></app-observation-item>
+    } } @if(observationsRecent.length < ((observationsTotal$ | async) || 0)){
+    <ion-item routerLink="observation" detail="false" class="list-end-note">
+      <ion-label color="primary">
+        <p>see all</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  }}
+</ion-content>

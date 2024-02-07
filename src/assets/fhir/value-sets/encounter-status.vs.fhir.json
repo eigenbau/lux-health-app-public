@@ -1,0 +1,88 @@
+{
+  "resourceType": "ValueSet",
+  "meta": {
+    "lastUpdated": "2021-07-21T10:31:36.452+10:00",
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/shareablevalueset"
+    ]
+  },
+  "url": "http://hl7.org/fhir/ValueSet/encounter-status",
+  "identifier": [
+    {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:oid:2.16.840.1.113883.4.642.3.246"
+    }
+  ],
+  "version": "4.0.1",
+  "name": "EncounterStatus",
+  "title": "EncounterStatus",
+  "status": "draft",
+  "experimental": false,
+  "expansion": {
+    "identifier": "70d16455-3c71-4f9c-89b8-911f7d036af8",
+    "timestamp": "2022-03-11T15:29:24+10:00",
+    "total": 9,
+    "offset": 0,
+    "parameter": [
+      {
+        "name": "version",
+        "valueUri": "http://hl7.org/fhir/encounter-status|4.0.1"
+      },
+      {
+        "name": "count",
+        "valueInteger": 2147483647
+      },
+      {
+        "name": "offset",
+        "valueInteger": 0
+      }
+    ],
+    "contains": [
+      {
+        "system": "http://hl7.org/fhir/encounter-status",
+        "code": "arrived",
+        "display": "Arrived"
+      },
+      {
+        "system": "http://hl7.org/fhir/encounter-status",
+        "code": "cancelled",
+        "display": "Cancelled"
+      },
+      {
+        "system": "http://hl7.org/fhir/encounter-status",
+        "code": "entered-in-error",
+        "display": "Entered in Error"
+      },
+      {
+        "system": "http://hl7.org/fhir/encounter-status",
+        "code": "finished",
+        "display": "Finished"
+      },
+      {
+        "system": "http://hl7.org/fhir/encounter-status",
+        "code": "in-progress",
+        "display": "In Progress"
+      },
+      {
+        "system": "http://hl7.org/fhir/encounter-status",
+        "code": "onleave",
+        "display": "On Leave"
+      },
+      {
+        "system": "http://hl7.org/fhir/encounter-status",
+        "code": "planned",
+        "display": "Planned"
+      },
+      {
+        "system": "http://hl7.org/fhir/encounter-status",
+        "code": "triaged",
+        "display": "Triaged"
+      },
+      {
+        "system": "http://hl7.org/fhir/encounter-status",
+        "code": "unknown",
+        "display": "Unknown"
+      }
+    ]
+  }
+}

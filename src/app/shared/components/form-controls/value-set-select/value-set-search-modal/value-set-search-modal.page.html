@@ -1,0 +1,86 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="modalController.dismiss()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ title }}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar [formControl]="searchInput" #searchbar></ion-searchbar>
+  </ion-toolbar>
+  <ion-progress-bar
+    [style.opacity]="(loading$ | async) ? 1 : 0"
+    type="indeterminate"
+  ></ion-progress-bar>
+</ion-header>
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+<ion-content #scrollElement fullscreen>
+  <!-- <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher> -->
+
+  <!-- Custom code list -->
+  @if((valueSetCustomName$ | async) !== '' && !searchInput.value ||
+  searchInput.value === ''){ @if(customCodeList$ | async; as customCodeList){
+  <ion-list>
+    @if(customCodeList.length === 0){
+    <ion-item class="list-note" lines="none">
+      <ion-label>Start typing to search...</ion-label>
+    </ion-item>
+    } @for(c of customCodeList; track trackByCode){
+    <ion-item-sliding #slidingItem>
+      <ion-item (click)="dismiss(c)">
+        <ion-label>
+          <h2>{{ c.display | titlecase }}</h2>
+        </ion-label>
+      </ion-item>
+      <ion-item-options>
+        <ion-item-option
+          (click)="slidingItem.closeOpened(); onRemoveFromFavouritesClicked(c)"
+        >
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+    }
+  </ion-list>
+  } } @if((state$ | async)?.total === 0 && (loading$ | async) === false){
+  <ion-item class="list-note" lines="none">
+    <ion-label>No matches found</ion-label>
+  </ion-item>
+  } @if(codeList$ | async; as codeList){
+  <ion-list>
+    @for(c of codeList; track trackByCode){
+    <ion-item-sliding
+      [disabled]="((valueSetCustomName$ | async) === '')"
+      #slidingItem
+    >
+      <ion-item (click)="dismiss(c)">
+        <ion-label>
+          <h2>{{ c.display | titlecase }}</h2>
+        </ion-label>
+      </ion-item>
+      <ion-item-options
+        side="end"
+        (ionSwipe)="slidingItem.closeOpened(); onAddToFavouritesClicked(c)"
+      >
+        <ion-item-option
+          (click)="slidingItem.closeOpened(); onAddToFavouritesClicked(c)"
+          expandable
+        >
+          <ion-icon slot="icon-only" name="bookmark-outline"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+    }
+  </ion-list>
+
+  <ion-infinite-scroll class="ion-padding-top">
+    <ion-infinite-scroll-content
+      loadingSpinner="lines"
+    ></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  }
+</ion-content>

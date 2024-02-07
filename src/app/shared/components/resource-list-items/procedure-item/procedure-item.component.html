@@ -1,0 +1,22 @@
+<ion-item detail [lines]="lines" [appExpandable]="trigger" class="resource">
+  <ion-label>
+    <div class="note" [routerLink]="link">Details</div>
+    <h2 #trigger>
+      {{ procedure.code?.coding?.[0]?.display | titlecase }}
+    </h2>
+    @if (procedure.note && procedure.note.length > 0) {
+      <p>
+        {{ procedure.note[0].text }}
+      </p>
+    }
+    <p>
+      {{ procedure.performedPeriod | period: "distanceToNow" }}
+      @if (!!+(procedure.performedPeriod | period: "durationInt")) {
+        <span>
+          • {{ procedure.performedPeriod | period: "time" }} •
+          {{ procedure.performedPeriod | period: "duration" }}
+        </span>
+      }
+    </p>
+  </ion-label>
+</ion-item>

@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSubmit()" [disabled]="!submitEnabled()">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Select templates</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar showCancelButton="never" #searchbar></ion-searchbar>
+  </ion-toolbar>
+  <ion-toolbar>
+    <app-horizontal-scroll-select
+      [options]="observationCategory$ | async"
+      [labelPath]="['coding', 0, 'display']"
+      #categorySelection
+    ></app-horizontal-scroll-select>
+  </ion-toolbar>
+</ion-header>
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+<ion-content #scrollElement>
+  <app-observation-list
+    [observations]="observationList$
+    | async
+    | observationFilter: { searchInput: searchbar.value || '', category: categorySelection.selected }"
+  >
+    <ng-template #templateHeader>
+      <ion-label>Observations</ion-label>
+      <ion-button
+        (click)="onResetSelection('observations')"
+        [disabled]="(templateBundle$ | async)?.observations?.length === 0"
+      >
+        Clear
+      </ion-button>
+    </ng-template>
+
+    <ng-template
+      #templateListItem
+      let-observation
+      let-lastItemInGroup="lastItemInGroup"
+      let-lastItem="lastItem"
+    >
+      <ion-item [lines]="lastItem ? 'full': lastItemInGroup ? 'none' : 'inset'">
+        <ion-checkbox
+          justify="space-between"
+          [checked]="(observationIsSelected(observation) | async)"
+          (ionChange)="onSelect(observation, $event)"
+        >
+          {{ observation.code.coding[0].display }}
+        </ion-checkbox>
+      </ion-item>
+    </ng-template>
+  </app-observation-list>
+</ion-content>

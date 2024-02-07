@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Conditions</ion-title>
+    <ion-buttons slot="end">
+      <app-person-button></app-person-button>
+      <app-chart-menu-button></app-chart-menu-button>
+
+      <ion-button [appPatientConditionInput] class="can-hide show-on-collapse">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <!-- <ion-toolbar>
+    <ion-searchbar [formControl]="searchInput"></ion-searchbar>
+  </ion-toolbar> -->
+
+  @if(loading$ | async){
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
+</ion-header>
+
+<app-scroll-to-top [scrollElement]="scrollElement"></app-scroll-to-top>
+
+<ion-content #scrollElement fullscreen>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons collapse="true" slot="end">
+        <ion-button [appPatientConditionInput]>
+          <ion-icon slot="icon-only" name="add"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title size="large">Conditions</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- No conditions found -->
+  @if((conditionList$ | async)?.length === 0 && (loading$ | async) === false){
+  <ion-list>
+    <ion-item lines="none" class="list-note">
+      <ion-label>No conditions found</ion-label>
+    </ion-item>
+  </ion-list>
+  }
+
+  <!-- Conditions -->
+  @if(conditionList$ | async; as conditionList){
+  <ion-list>
+    @for(c of conditionList; track trackById; let i = $index){
+    <app-condition-item
+      [link]="[c.id || '']"
+      [condition]="c"
+      [lines]="i + 1 === conditionList.length ? 'full' : 'inset'"
+    ></app-condition-item>
+    }
+  </ion-list>
+  }
+</ion-content>

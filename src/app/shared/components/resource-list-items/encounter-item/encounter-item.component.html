@@ -1,0 +1,26 @@
+<ion-item detail [lines]="lines" [appExpandable]="trigger" class="resource">
+  <ion-label>
+    <div class="note" [routerLink]="link">
+      {{ encounter.period | period: "distanceToNow" }}
+    </div>
+    <h2 #trigger>
+      {{ encounter.class.display | titlecase }}
+      <ion-chip
+        [color]="
+          encounter.status === 'cancelled'
+            ? 'secondary'
+            : encounter.status === 'finished'
+              ? 'primary'
+              : ''
+        "
+      >
+        {{ encounter.status | titlecase }}
+      </ion-chip>
+    </h2>
+    <p>
+      {{ encounter.period?.start | date }} •
+      {{ encounter.period | period: "time" }} •
+      {{ encounter.period | period: "duration" }}
+    </p>
+  </ion-label>
+</ion-item>

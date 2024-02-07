@@ -1,0 +1,93 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSubmit()" [disabled]="form.invalid">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Procedure</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      @if(procedure.encounter?.reference){
+      <ion-button (click)="procedureFormGroup.toggleEncounterLink()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          [name]="(procedureFormGroup.linkEncounter$ | async) ? 'link-outline' : 'unlink-outline'"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      }
+    </ion-buttons>
+    <ion-buttons slot="end">
+      @if((procedureFormGroup.procedure$ | async)?.encounter?.reference){
+      <ion-button (click)="procedureFormGroup.toggleSyncDateTime()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="calendar"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      } @if(!(procedureFormGroup.procedure$ | async)?.encounter?.reference){
+      <ion-button (click)="procedureFormGroup.togglePerformedPeriod()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="calendar"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      }
+      <ion-button (click)="procedureFormGroup.toggleSyncDuration()">
+        <ion-icon
+          slot="icon-only"
+          name="timer-outline"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      <ion-button (click)="procedureFormGroup.toggleBodySite()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="body"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      <ion-button (click)="procedureFormGroup.toggleCategory()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="copy"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      <ion-button (click)="procedureFormGroup.toggleNote()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="document"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container [formGroup]="form">
+    <app-patient-procedure-form-group
+      #procedureFormGroup
+      [patchValue]="procedure"
+      [duration]="duration"
+      [dateTime]="dateTime"
+      lines="inset"
+    ></app-patient-procedure-form-group>
+  </ng-container>
+</ion-content>

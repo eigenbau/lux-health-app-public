@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button slot="end" (click)="carePlanFormGroup.toggleNote()">
+        <ion-icon
+          slot="icon-only"
+          size="small"
+          name="document"
+          color="primary"
+        ></ion-icon>
+      </ion-button>
+      <ion-button (click)="onSubmit()" [disabled]="form.invalid">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Care plan</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button [appPatientConditionInput]>
+        <ion-icon name="fitness-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button [appPatientGoalInput]>
+        <ion-icon name="ribbon-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+  <ng-container [formGroup]="form">
+    <app-patient-care-plan-form-group
+      #carePlanFormGroup
+      [patchValue]="carePlan"
+      lines="inset"
+    ></app-patient-care-plan-form-group>
+  </ng-container>
+</ion-content>

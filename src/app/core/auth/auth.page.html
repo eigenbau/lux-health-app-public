@@ -1,0 +1,13 @@
+<div class="container">
+  <div class="content">
+    @if(( auth.user$ | async ) === null){
+    <ion-button (click)="onSignIn()">
+      <ion-text color="primary">Sign in with Google</ion-text>
+    </ion-button>
+    } @if(( auth.user$ | async ) !== null){
+    <ion-button (click)="onSignOut()">
+      <ion-text color="primary">Sign out</ion-text>
+    </ion-button>
+    }
+  </div>
+</div>
